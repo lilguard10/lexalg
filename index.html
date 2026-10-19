@@ -2,7 +2,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400;1,8..60,500&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com/3.4.17"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
@@ -16,13 +16,13 @@
     --ink:#16223A;
     --ink-2:#5E6573;
     --line:rgba(22,34,58,.12);
-    --accent:#94712F;
+    --accent:#7F6127;
     --on-ink:#FBF9F5;
     --hero-tone:#E3DBCE;
     --overlay:rgba(22,34,58,.36);
     --shadow:0 24px 60px -28px rgba(31,27,23,.28);
-    --f-display:'Cormorant Garamond', 'Times New Roman', Georgia, serif;
-    --f-body:'Jost', 'Helvetica Neue', Arial, sans-serif;
+    --f-display:'Source Serif 4', Georgia, 'Times New Roman', serif;
+    --f-body:'Atkinson Hyperlegible', Verdana, 'Helvetica Neue', Arial, sans-serif;
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
@@ -40,12 +40,12 @@
   }
   html{ scroll-behavior:smooth; scroll-padding-top:calc(76px + env(safe-area-inset-top, 0px)); }
   *{ box-sizing:border-box; }
-  body{ margin:0; background:var(--bg); color:var(--ink); font-family:var(--f-body); font-weight:300; font-size:15px; -webkit-font-smoothing:antialiased; overflow-x:hidden; overflow-x:clip; }
+  body{ margin:0; background:var(--bg); color:var(--ink); font-family:var(--f-body); font-weight:400; font-size:16px; line-height:1.5; -webkit-font-smoothing:antialiased; overflow-x:hidden; overflow-x:clip; }
   html{ overflow-x:hidden; overflow-x:clip; }
   body::before{ content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top, 0px); z-index:45; background:var(--bg); }
   ::selection{ background:var(--ink); color:var(--on-ink); }
   button{ color:inherit; font-weight:inherit; }
-  strong{ font-weight:500; }
+  strong{ font-weight:700; }
   :focus-visible{ outline:1px solid var(--ink); outline-offset:3px; }
 
   .gutter{ padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); }
@@ -53,13 +53,13 @@
 
   .f-display{ font-family:var(--f-display); font-weight:400; text-wrap:balance; }
   .f-mono{ font-variant-numeric:tabular-nums; }
-  .label{ font-size:11px; letter-spacing:.2em; text-transform:uppercase; font-weight:400; }
-  .eyebrow{ font-size:10.5px; letter-spacing:.24em; text-transform:uppercase; font-weight:400; color:var(--accent); display:flex; align-items:center; gap:10px; }
+  .label{ font-size:13px; letter-spacing:.1em; text-transform:uppercase; font-weight:400; }
+  .eyebrow{ font-size:12.5px; letter-spacing:.14em; text-transform:uppercase; font-weight:700; color:var(--accent); display:flex; align-items:center; gap:10px; }
   .muted{ color:var(--ink-2); }
-  .h-section{ font-family:var(--f-display); font-weight:300; font-size:clamp(2.1rem, 4.4vw, 3.4rem); line-height:1.04; text-wrap:balance; letter-spacing:-.005em; }
+  .h-section{ font-family:var(--f-display); font-weight:400; font-size:clamp(2rem, 4.2vw, 3.2rem); line-height:1.12; text-wrap:balance; letter-spacing:-.005em; }
   .rule{ width:36px; height:1px; background:currentColor; opacity:.5; }
 
-  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:10px; font-size:11px; letter-spacing:.2em; text-transform:uppercase; font-weight:400; padding:16px 30px; border:1px solid transparent; border-radius:0; transition:background-color .25s, color .25s, border-color .25s, opacity .25s; cursor:pointer; white-space:nowrap; }
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:10px; font-size:14px; letter-spacing:.08em; text-transform:uppercase; font-weight:700; padding:16px 28px; border:1px solid transparent; border-radius:0; transition:background-color .25s, color .25s, border-color .25s, opacity .25s; cursor:pointer; white-space:nowrap; }
   .btn-primary{ background:var(--ink); color:var(--on-ink); border-color:var(--ink); }
   .btn-primary:hover{ opacity:.86; }
   .btn-primary:disabled{ background:var(--surface-2); border-color:var(--surface-2); color:var(--ink-2); cursor:not-allowed; opacity:1; }
@@ -67,18 +67,18 @@
   .btn-outline:hover{ background:var(--ink); color:var(--on-ink); }
   .btn-light{ border-color:rgba(251,249,246,.85); color:#FBF9F6; }
   .btn-light:hover{ background:#FBF9F6; color:#1F1B17; }
-  .btn-sm{ padding:10px 16px; font-size:10px; }
-  .link{ color:var(--ink-2); display:inline-flex; align-items:center; gap:8px; font-size:11px; letter-spacing:.18em; text-transform:uppercase; }
+  .btn-sm{ padding:11px 16px; font-size:13px; }
+  .link{ color:var(--ink-2); display:inline-flex; align-items:center; gap:8px; font-size:14px; letter-spacing:.06em; }
   .link:hover{ color:var(--ink); }
-  .link-u{ display:inline-flex; align-items:center; gap:8px; font-size:10.5px; letter-spacing:.2em; text-transform:uppercase; padding-bottom:4px; border-bottom:1px solid currentColor; transition:opacity .2s; }
+  .link-u{ display:inline-flex; align-items:center; gap:8px; font-size:14px; font-weight:700; letter-spacing:.06em; padding-bottom:3px; border-bottom:1px solid currentColor; transition:opacity .2s; }
   .link-u:hover{ opacity:.6; }
 
   .card{ background:var(--surface); border:1px solid var(--line); border-radius:0; }
   .card-hover{ transition:border-color .25s; }
   .card-hover:hover{ border-color:var(--ink-2); }
-  .chip{ font-size:10px; letter-spacing:.16em; text-transform:uppercase; padding:6px 10px; border:1px solid var(--line); color:var(--ink-2); }
-  .pill-lacre{ font-size:9.5px; letter-spacing:.18em; text-transform:uppercase; padding:5px 9px; background:var(--bg); color:var(--ink); }
-  .tag-promo{ font-size:9.5px; letter-spacing:.2em; text-transform:uppercase; color:var(--accent); }
+  .chip{ font-size:13px; letter-spacing:.02em; text-transform:none !important; text-transform:uppercase; padding:6px 10px; border:1px solid var(--line); color:var(--ink-2); }
+  .pill-lacre{ font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:5px 9px; background:var(--bg); color:var(--ink); }
+  .tag-promo{ font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); }
 
   /* Textura de tejido (twill) sobre un tono de lana */
   .weave{ background-color:var(--tone, #C9B8A3);
@@ -98,8 +98,8 @@
   @media (min-width:640px){ .snap-row{ grid-auto-columns:40%; } }
   @media (min-width:1024px){ .snap-row{ grid-auto-flow:row; grid-template-columns:repeat(5, minmax(0,1fr)); overflow:visible; } }
 
-  .field-label{ display:block; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:var(--ink-2); }
-  .field{ width:100%; background:transparent; border:0; border-bottom:1px solid var(--line); padding:10px 0; font:inherit; font-size:15px; color:var(--ink); outline:none; border-radius:0; }
+  .field-label{ display:block; font-size:14px; font-weight:700; letter-spacing:0; color:var(--ink-2); }
+  .field{ width:100%; background:transparent; border:0; border-bottom:1px solid var(--line); padding:10px 0; font:inherit; font-size:17px; color:var(--ink); outline:none; border-radius:0; }
   .field:focus{ border-bottom-color:var(--ink); }
   .field::placeholder{ color:var(--ink-2); opacity:.7; }
   textarea.field{ border:1px solid var(--line); padding:12px; resize:none; }
@@ -420,7 +420,10 @@ function SectionHead({ eyebrow, title, children, center = true }) {
 }
 
 /* ---------------------------------- HERO (campaña a sangre) ---------------------------------- */
-function Hero({ onExplore, onNews }) {
+function Hero({ onCase }) {
+  const [q, setQ] = useState("");
+  const examples = ["Me han despedido", "Comprar una vivienda", "Herencia en el extranjero", "Carta de Hacienda"];
+  const submit = (e) => { e.preventDefault(); if (q.trim()) onCase(q.trim()); };
   return (
     <section className="weave relative overflow-hidden" style={{ "--tone": "var(--hero-tone)", color: "var(--ink)" }}>
       {/* La lupa del logo, en grande y casi invisible */}
@@ -429,20 +432,30 @@ function Hero({ onExplore, onNews }) {
         <circle cx="46" cy="46" r="26" fill="none" stroke="#D1A54A" strokeWidth=".25" />
         <path d="M68 68L90 90" stroke="#D1A54A" strokeWidth=".6" strokeLinecap="round" />
       </svg>
-      <div className="gutter relative max-w-7xl mx-auto flex flex-col items-center justify-end text-center pb-14 md:pb-20 pt-32"
-        style={{ minHeight: "clamp(500px, 74vh, 720px)" }}>
+      <div className="gutter relative max-w-7xl mx-auto flex flex-col items-center justify-center text-center py-16 md:py-24"
+        style={{ minHeight: "clamp(480px, 70vh, 700px)" }}>
         <Logo size={56} />
-        <div className="eyebrow mt-7">Sede en Bilbao · Desde 2004</div>
-        <h1 className="f-display mt-5 leading-[0.98]" style={{ fontSize: "clamp(2.9rem, 7.4vw, 6rem)", fontWeight: 300 }}>
-          El bufete correcto,<br /><em className="italic" style={{ color: "var(--accent)" }}>para el caso correcto.</em>
+        <h1 className="f-display mt-8 leading-[1.08]" style={{ fontSize: "clamp(2.4rem, 6vw, 4.6rem)" }}>
+          Cuéntanos tu caso.<br /><em className="italic" style={{ color: "var(--accent)" }}>Encontramos tu despacho.</em>
         </h1>
-        <p className="mt-6 text-[15px] leading-relaxed max-w-[30rem] muted">
-          Lexa LG conecta patrimonios y familias internacionales con los despachos de mayor prestigio en España, en diez especialidades.
+        <p className="mt-6 text-[17px] leading-relaxed max-w-[32rem] muted">
+          Escríbelo con tus palabras. Te decimos qué especialidad necesitas y qué despachos encajan mejor.
         </p>
-        <div className="mt-9 flex flex-wrap justify-center gap-3">
-          <button onClick={onExplore} className="btn btn-primary">Descubrir especialidades</button>
-          <button onClick={onNews} className="btn btn-outline">Actualidad</button>
-        </div>
+        <form onSubmit={submit} className="mt-9 w-full max-w-xl">
+          <label htmlFor="hero-case" className="block text-left text-[16.5px] mb-2.5" style={{ fontWeight: 700 }}>Desglosa tu caso</label>
+          <div className="flex items-stretch" style={{ background: "var(--surface)", border: "1px solid var(--ink)" }}>
+            <span className="pl-4 flex items-center muted" aria-hidden="true"><Icon name="search" size={19} /></span>
+            <input id="hero-case" value={q} onChange={e => setQ(e.target.value)}
+              placeholder="Ej.: vender un piso"
+              className="flex-1 min-w-0 bg-transparent outline-none px-3 py-4 text-[17px]" style={{ color: "var(--ink)" }} />
+            <button type="submit" className="btn btn-primary" style={{ paddingLeft: 20, paddingRight: 20 }}>Analizar</button>
+          </div>
+          <div className="mt-4 flex flex-wrap justify-center gap-2">
+            {examples.map(x => (
+              <button key={x} type="button" onClick={() => onCase(x)} className="text-[15.5px] px-3.5 py-2 transition-colors hover:bg-[var(--surface)]" style={{ border: "1px solid var(--line)" }}>{x}</button>
+            ))}
+          </div>
+        </form>
       </div>
     </section>
   );
@@ -461,7 +474,7 @@ function Promises() {
           <div key={t} className="flex flex-col items-center text-center gap-2.5">
             <Icon name={icon} size={20} />
             <div className="label">{t}</div>
-            <p className="text-[13.5px] muted max-w-[16rem]">{d}</p>
+            <p className="text-[15px] muted max-w-[16rem]">{d}</p>
           </div>
         ))}
       </div>
@@ -482,7 +495,7 @@ function CategoryTile({ c, i, onPick }) {
       </div>
       <div>
         <div className="label leading-relaxed">{c.label}</div>
-        <div className="text-[12.5px] muted mt-1">{n} despachos</div>
+        <div className="text-[14px] muted mt-1">{n} despachos</div>
       </div>
     </button>
   );
@@ -537,7 +550,7 @@ function TermsGate({ onAccept }) {
             <div key={n} className="pt-7" style={{ borderTop: "1px solid var(--line)" }}>
               <div className="eyebrow mb-3" style={{ color: "var(--accent)" }}>{n}</div>
               <h2 className="f-display text-[1.6rem] leading-tight mb-3">{t}</h2>
-              <p className="text-[15px] leading-relaxed muted">{body}</p>
+              <p className="text-[16.5px] leading-relaxed muted">{body}</p>
             </div>
           ))}
         </div>
@@ -545,7 +558,7 @@ function TermsGate({ onAccept }) {
         <div className="mt-12 pt-8 flex flex-col items-center gap-7 text-center" style={{ borderTop: "1px solid var(--line)" }}>
           <label htmlFor="terms-accept" className="flex items-start gap-3 cursor-pointer max-w-md text-left">
             <input id="terms-accept" type="checkbox" checked={checked} onChange={e => setChecked(e.target.checked)} className="mt-1 w-4 h-4 shrink-0" style={{ accentColor: "var(--ink)" }} />
-            <span className="text-[14px] muted">He leído y acepto el tratamiento de mis datos y las condiciones de uso de Lexa LG.</span>
+            <span className="text-[15.5px] muted">He leído y acepto el tratamiento de mis datos y las condiciones de uso de Lexa LG.</span>
           </label>
           <button onClick={() => checked && onAccept()} disabled={!checked} className="btn btn-primary w-full sm:w-auto">
             Aceptar y ver especialidades
@@ -602,7 +615,7 @@ function QuickRefine({ categoryId, onComplete, onCancel }) {
       <div className="grid sm:grid-cols-2 gap-2.5 mb-7">
         {current.options.map(opt => (
           <button key={opt} onClick={() => choose(opt)}
-            className="text-left px-5 py-4 border text-[14.5px] flex items-center justify-between gap-3 transition-colors hover:bg-[var(--surface-2)]"
+            className="text-left px-5 py-4 border text-[16px] flex items-center justify-between gap-3 transition-colors hover:bg-[var(--surface-2)]"
             style={{ borderColor: "var(--line)" }}>
             {opt} <Icon name="chevronR" size={14} className="muted shrink-0" />
           </button>
@@ -628,7 +641,7 @@ function CategoryResults({ categoryId, favorites, toggleFav, onBack, onContact }
       <div className="max-w-7xl mx-auto">
         <button onClick={onBack} className="link mb-10"><Icon name="chevronL" size={13} /> Todas las especialidades</button>
         <SectionHead eyebrow={cat.label} title="Mejores bufetes para tu caso">
-          <div className="text-[13px] muted">{matches.length} despachos</div>
+          <div className="text-[14.5px] muted">{matches.length} despachos</div>
           {!refining && (
             <button onClick={() => setRefining(true)} className="btn btn-outline btn-sm">Afinar en 2 preguntas</button>
           )}
@@ -665,14 +678,24 @@ function SearchResultsPage({ query, favorites, toggleFav, onContact, onPickCateg
   return (
     <section className="gutter py-10 md:py-14">
       <div className="max-w-7xl mx-auto">
-        <SectionHead eyebrow="Resultados de búsqueda" title={<span className="break-words">«{query}»</span>} />
+        <SectionHead eyebrow="Tu caso, desglosado" title={<span className="break-words">«{query}»</span>} />
+
+        {related.length > 0 && (
+          <div className="max-w-2xl mx-auto mb-12 p-6 md:p-8 flex gap-4" style={{ background: "var(--surface-2)" }}>
+            <span className="shrink-0 mt-0.5"><Logo size={36} /></span>
+            <div className="min-w-0">
+              <div className="eyebrow mb-2">Nuestro análisis</div>
+              <p className="text-[16.5px] leading-relaxed">{reply(query)}</p>
+            </div>
+          </div>
+        )}
 
         {related.length > 0 && (
           <div className="mb-14 flex flex-col items-center">
             <div className="eyebrow mb-4">Especialidades relacionadas</div>
             <div className="flex flex-wrap justify-center gap-2.5">
               {related.map(c => (
-                <button key={c.id} onClick={() => onPickCategory(c.id)} className="card card-hover flex items-center gap-2.5 px-4 py-2.5 text-[13px]">
+                <button key={c.id} onClick={() => onPickCategory(c.id)} className="card card-hover flex items-center gap-2.5 px-4 py-2.5 text-[14.5px]">
                   <Icon name={c.icon} size={15} /> {c.label}
                 </button>
               ))}
@@ -681,7 +704,7 @@ function SearchResultsPage({ query, favorites, toggleFav, onContact, onPickCateg
         )}
 
         {results.length === 0 ? (
-          <p className="text-[15px] muted max-w-xl mx-auto text-center">No encontramos despachos para «{query}». Prueba con otro nombre o describe tu caso con otras palabras (p. ej. «impuestos», «visado», «herencia»).</p>
+          <p className="text-[16.5px] muted max-w-xl mx-auto text-center">No encontramos despachos para «{query}». Prueba con otro nombre o describe tu caso con otras palabras (p. ej. «impuestos», «visado», «herencia»).</p>
         ) : (
           <>
             <div className="eyebrow justify-center mb-8">Bufetes que encajan · {results.length}</div>
@@ -714,7 +737,7 @@ function SentState({ title, children, onClose }) {
     <div className="text-center py-6">
       <div className="mx-auto mb-6 w-fit"><FirmCrest name="Lexa LG" size={64} /></div>
       <h3 className="f-display text-[1.9rem] mb-3">{title}</h3>
-      <p className="text-[14px] muted mb-8 max-w-xs mx-auto">{children}</p>
+      <p className="text-[15.5px] muted mb-8 max-w-xs mx-auto">{children}</p>
       {onClose && <button onClick={onClose} className="btn btn-outline">Cerrar</button>}
     </div>
   );
@@ -725,7 +748,7 @@ function ModalHead({ title, sub, eyebrow }) {
     <div className="text-center mb-8">
       {eyebrow && <div className="eyebrow justify-center mb-3">{eyebrow}</div>}
       <h3 className="f-display text-[1.9rem] leading-tight">{title}</h3>
-      {sub && <p className="text-[13.5px] muted mt-2 max-w-xs mx-auto">{sub}</p>}
+      {sub && <p className="text-[15px] muted mt-2 max-w-xs mx-auto">{sub}</p>}
     </div>
   );
 }
@@ -784,14 +807,14 @@ function JoinFirmsSection({ onOpen }) {
         <div className="flex flex-col items-center text-center px-8">
           <Logo size={120} plain />
           <div className="f-display text-[1.6rem] tracking-[0.32em] pl-[0.32em] mt-4">LEXA LG</div>
-          <div className="label mt-3" style={{ color: "#D1A54A", fontSize: 10 }}>Red de despachos</div>
+          <div className="label mt-3" style={{ color: "#D1A54A", fontSize: 12 }}>Red de despachos</div>
         </div>
       </div>
       <div className="gutter flex items-center py-16 md:py-0">
         <div className="max-w-md mx-auto md:mx-0 md:ml-16 text-center md:text-left">
           <div className="eyebrow justify-center md:justify-start mb-5">Para despachos y abogados independientes</div>
           <h2 className="h-section">¿Eres un bufete o abogado/a independiente?</h2>
-          <p className="mt-5 text-[15px] leading-relaxed muted">Únete a Lexa LG y conecta con clientes internacionales que buscan exactamente tu especialidad.</p>
+          <p className="mt-5 text-[16.5px] leading-relaxed muted">Únete a Lexa LG y conecta con clientes internacionales que buscan exactamente tu especialidad.</p>
           <button onClick={onOpen} className="btn btn-primary mt-9">Quiero unirme</button>
         </div>
       </div>
@@ -812,7 +835,7 @@ function ConsentModal({ onAccept, onClose }) {
 
         {showPolicy ? (
           <>
-            <div className="text-[14px] muted leading-relaxed space-y-4 mb-7">
+            <div className="text-[15.5px] muted leading-relaxed space-y-4 mb-7">
               <p><strong style={{ color: "var(--ink)" }}>Responsable.</strong> Lexa LG — Legal Group actúa como intermediario y trata tus datos únicamente para elaborar tu recomendación y, si lo autorizas, ponerte en contacto con el despacho elegido.</p>
               <p><strong style={{ color: "var(--ink)" }}>Datos que tratamos.</strong> Especialidad y respuestas del diagnóstico, y, si decides contactar con un despacho, tu nombre y correo electrónico.</p>
               <p><strong style={{ color: "var(--ink)" }}>Finalidad.</strong> Generar una recomendación personalizada y transmitir tu consulta al despacho que elijas contactar. No usamos tus datos con fines publicitarios propios.</p>
@@ -824,12 +847,12 @@ function ConsentModal({ onAccept, onClose }) {
           </>
         ) : (
           <>
-            <p className="text-[14.5px] muted leading-relaxed mb-7 text-center">
+            <p className="text-[16px] muted leading-relaxed mb-7 text-center">
               Antes de compartir tu diagnóstico con los despachos recomendados, confirma que aceptas el tratamiento de tus datos conforme al RGPD. Tu información se comparte únicamente con los bufetes que elijas contactar.
             </p>
             <label htmlFor="consent-accept" className="flex items-start gap-3 mb-9 cursor-pointer">
               <input id="consent-accept" type="checkbox" checked={checked} onChange={e => setChecked(e.target.checked)} className="mt-1 w-4 h-4 shrink-0" style={{ accentColor: "var(--ink)" }} />
-              <span className="text-[14px] muted">
+              <span className="text-[15.5px] muted">
                 He leído y acepto la{" "}
                 <button type="button" onClick={(e) => { e.preventDefault(); setShowPolicy(true); }} className="underline underline-offset-4" style={{ color: "var(--ink)" }}>
                   política de privacidad
@@ -878,7 +901,7 @@ function ContactFormModal({ firm, onClose, onSubmit }) {
               <FirmCrest name={firm.name} size={64} />
               <div className="eyebrow mt-5">Contactar con</div>
               <h3 className="f-display text-[1.8rem] leading-tight mt-1">{firm.name}</h3>
-              <p className="text-[12.5px] muted mt-3 flex items-center gap-2"><Icon name="lock" size={12} /> Estos datos se comparten únicamente con este despacho.</p>
+              <p className="text-[14px] muted mt-3 flex items-center gap-2"><Icon name="lock" size={12} /> Estos datos se comparten únicamente con este despacho.</p>
             </div>
 
             <div className="space-y-6">
@@ -907,7 +930,7 @@ function ContactFormModal({ firm, onClose, onSubmit }) {
             <div className="mt-8 p-5 flex items-center justify-between gap-3" style={{ background: "var(--surface-2)" }}>
               <div className="min-w-0">
                 <div className="label">Reunión prioritaria en 48 h</div>
-                <div className="text-[12.5px] muted mt-1">Próximamente. ¿Te interesaría? Te avisamos cuando esté disponible.</div>
+                <div className="text-[14px] muted mt-1">Próximamente. ¿Te interesaría? Te avisamos cuando esté disponible.</div>
               </div>
               <button type="button" onClick={() => setPrioInterest(true)} disabled={prioInterest} className="link-u shrink-0 disabled:opacity-60">
                 {prioInterest ? "Apuntado" : "Me interesa"}
@@ -946,7 +969,7 @@ function AuthModal({ onClose, onLogin }) {
           </div>
         </div>
         <button type="submit" className="btn btn-primary w-full mt-9">{mode === "login" ? "Entrar" : "Registrarme"}</button>
-        <div className="text-center mt-6 text-[13px] muted">
+        <div className="text-center mt-6 text-[14.5px] muted">
           {mode === "login" ? (
             <>¿Aún no tienes cuenta? <button type="button" className="underline underline-offset-4" style={{ color: "var(--ink)" }} onClick={() => setMode("register")}>Regístrate</button></>
           ) : (
@@ -965,9 +988,9 @@ function FirmCard({ firm, isFav, onToggleFav, onContact, topPick }) {
     <article className="group flex flex-col min-w-0">
       <div className="relative aspect-[4/5] overflow-hidden" style={topPick ? { outline: "1px solid var(--ink)", outlineOffset: 4 } : undefined}>
         <button onClick={onContact} className="weave zoom absolute inset-0 flex flex-col items-center justify-center gap-3" style={{ "--tone": tone, color: fg }} aria-label={`Contactar con ${firm.name}`}>
-          <span className="f-display font-light" style={{ fontSize: "clamp(2.6rem, 6vw, 4rem)", lineHeight: 1, letterSpacing: ".04em" }}>{initialsOf(firm.name)}</span>
+          <span className="f-display" style={{ fontSize: "clamp(2.6rem, 6vw, 4rem)", lineHeight: 1, letterSpacing: ".04em" }}>{initialsOf(firm.name)}</span>
           <span className="rule" />
-          <span className="label opacity-80" style={{ fontSize: 9.5 }}>{firm.city}</span>
+          <span className="label opacity-80" style={{ fontSize: 12 }}>{firm.city}</span>
         </button>
         <div className="absolute top-2.5 left-2.5 flex flex-col items-start gap-1.5 pointer-events-none">
           {topPick && <span className="pill-lacre">Mejor opción</span>}
@@ -980,10 +1003,10 @@ function FirmCard({ firm, isFav, onToggleFav, onContact, topPick }) {
       </div>
 
       <div className="pt-4 flex flex-col flex-1">
-        <div className="label muted truncate" style={{ fontSize: 9.5 }}>{firm.focus.map(f => CATEGORIES.find(c => c.id === f)?.label.split(/,| &/)[0]).join(" · ")}</div>
+        <div className="label muted truncate" style={{ fontSize: 12 }}>{firm.focus.map(f => CATEGORIES.find(c => c.id === f)?.label.split(/,| &/)[0]).join(" · ")}</div>
         <h3 className="f-display text-[1.25rem] md:text-[1.45rem] leading-snug mt-1.5">{firm.name}</h3>
-        <div className="text-[12.5px] muted mt-1 f-mono">Desde {firm.since} · {parseInt(firm.size)} socios · <Fee tier={firm.priceTier} /></div>
-        <p className="text-[13px] muted leading-relaxed mt-2.5 line-clamp-2 hidden sm:block">{firm.desc}</p>
+        <div className="text-[14px] muted mt-1 f-mono">Desde {firm.since} · {parseInt(firm.size)} socios · <Fee tier={firm.priceTier} /></div>
+        <p className="text-[14.5px] muted leading-relaxed mt-2.5 line-clamp-2 hidden sm:block">{firm.desc}</p>
         <div className="mt-4">
           <button onClick={onContact} className="link-u">Contactar</button>
         </div>
@@ -1004,18 +1027,18 @@ function NewsFeed() {
             <div className="weave aspect-[16/10] flex items-end p-6" style={{ "--tone": "#A48A6E", color: "#FBF7F1" }}>
               <span className="label">{lead.tag}</span>
             </div>
-            <h3 className="f-display font-light text-[2rem] md:text-[2.6rem] leading-[1.06]">{lead.title}</h3>
-            <p className="text-[15px] muted leading-relaxed max-w-xl">{lead.excerpt}</p>
+            <h3 className="f-display text-[2rem] md:text-[2.6rem] leading-[1.06]">{lead.title}</h3>
+            <p className="text-[16.5px] muted leading-relaxed max-w-xl">{lead.excerpt}</p>
           </article>
           <div>
             {rest.map((a, i) => (
               <article key={i} className="py-6" style={{ borderTop: "1px solid var(--line)" }}>
                 <div className="flex items-center justify-between gap-3 mb-2.5">
                   <span className="eyebrow" style={{ color: "var(--accent)" }}>{a.tag}</span>
-                  {a.sponsor && <span className="text-[11px] muted italic truncate">Patrocinado · {a.sponsor}</span>}
+                  {a.sponsor && <span className="text-[13px] muted italic truncate">Patrocinado · {a.sponsor}</span>}
                 </div>
                 <h3 className="f-display text-[1.35rem] leading-snug">{a.title}</h3>
-                <p className="text-[13.5px] muted leading-relaxed mt-2">{a.excerpt}</p>
+                <p className="text-[15px] muted leading-relaxed mt-2">{a.excerpt}</p>
               </article>
             ))}
           </div>
@@ -1035,14 +1058,14 @@ function FavoritesPanel({ favorites, toggleFav, onClose, user, onLogout }) {
         <div className="flex items-start justify-between mb-10">
           <div>
             <div className="eyebrow">{user ? `Hola, ${user.name}` : "Mi selección"}</div>
-            <h3 className="f-display text-[2.2rem] mt-2 font-light">Favoritos</h3>
+            <h3 className="f-display text-[2.2rem] mt-2">Favoritos</h3>
           </div>
           <button onClick={onClose} className="muted hover:opacity-70" aria-label="Cerrar"><Icon name="x" /></button>
         </div>
         {favFirms.length === 0 ? (
           <div className="py-10 text-center" style={{ borderTop: "1px solid var(--line)" }}>
             <Icon name="star" size={22} className="mx-auto mb-4 muted" />
-            <p className="text-[14px] muted max-w-xs mx-auto">Aún no has guardado ningún bufete. Marca la estrella en cualquier ficha para añadirlo aquí.</p>
+            <p className="text-[15.5px] muted max-w-xs mx-auto">Aún no has guardado ningún bufete. Marca la estrella en cualquier ficha para añadirlo aquí.</p>
           </div>
         ) : (
           <div>
@@ -1051,7 +1074,7 @@ function FavoritesPanel({ favorites, toggleFav, onClose, user, onLogout }) {
                 <FirmCrest name={f.name} size={56} />
                 <div className="min-w-0 flex-1">
                   <h4 className="f-display text-[1.2rem] truncate">{f.name}</h4>
-                  <div className="text-[12px] muted mt-0.5">{f.city} · desde {f.since}</div>
+                  <div className="text-[13.5px] muted mt-0.5">{f.city} · desde {f.since}</div>
                 </div>
                 <button onClick={() => toggleFav(f.name)} aria-label="Quitar de favoritos"><Icon name="starFill" size={16} /></button>
               </div>
@@ -1183,13 +1206,13 @@ function Concierge({ onOpenWizard }) {
             <FirmCrest name="Lexa LG" size={36} />
             <div>
               <div className="label">Concierge</div>
-              <div className="text-[11.5px] muted mt-0.5">Te orientamos hacia la especialidad adecuada</div>
+              <div className="text-[13px] muted mt-0.5">Te orientamos hacia la especialidad adecuada</div>
             </div>
             <button onClick={() => setOpen(false)} className="ml-auto muted hover:opacity-70" aria-label="Cerrar"><Icon name="x" size={16} /></button>
           </div>
           <div className="flex-1 overflow-y-auto scrollbar-none px-5 py-5 space-y-4">
             {msgs.map((m, i) => (
-              <div key={i} className={`max-w-[86%] text-[14px] leading-relaxed ${m.from === "bot" ? "" : "ml-auto px-4 py-3"}`}
+              <div key={i} className={`max-w-[86%] text-[15.5px] leading-relaxed ${m.from === "bot" ? "" : "ml-auto px-4 py-3"}`}
                 style={m.from === "bot" ? { color: "var(--ink)" } : { background: "var(--surface-2)" }}>
                 {m.text}
               </div>
@@ -1210,7 +1233,7 @@ function Concierge({ onOpenWizard }) {
         className="fixed z-50 w-11 h-11 md:w-auto md:h-12 md:px-5 flex items-center justify-center gap-2.5 transition-opacity hover:opacity-85"
         style={{ ...edge, bottom: "calc(env(safe-area-inset-bottom, 0px) + 20px)", background: "var(--ink)", color: "var(--on-ink)", boxShadow: "var(--shadow)" }}>
         <Icon name={open ? "x" : "bot"} size={17} />
-        <span className="label hidden md:inline" style={{ fontSize: 10 }}>{open ? "Cerrar" : "Concierge"}</span>
+        <span className="label hidden md:inline" style={{ fontSize: 12 }}>{open ? "Cerrar" : "Concierge"}</span>
       </button>
     </>
   );
@@ -1229,13 +1252,13 @@ function MenuDrawer({ onClose, onPick, onExplore, onNews, onOfertas, onJoin }) {
         </div>
         <nav className="flex flex-col">
           {[["Especialidades", onExplore], ["Despachos recomendados", onOfertas], ["Actualidad legal", onNews], ["Únete como despacho", onJoin]].map(([l, fn]) => (
-            <button key={l} onClick={go(fn)} className="f-display text-[1.7rem] font-light text-left py-2.5 hover:opacity-60 transition-opacity">{l}</button>
+            <button key={l} onClick={go(fn)} className="f-display text-[1.7rem] text-left py-2.5 hover:opacity-60 transition-opacity">{l}</button>
           ))}
         </nav>
         <div className="eyebrow mt-10 mb-4">Por especialidad</div>
         <div className="flex flex-col">
           {CATEGORIES.map(c => (
-            <button key={c.id} onClick={go(() => onPick(c.id))} className="text-left text-[14px] py-2.5 flex items-center justify-between gap-3 muted hover:text-[var(--ink)]" style={{ borderTop: "1px solid var(--line)" }}>
+            <button key={c.id} onClick={go(() => onPick(c.id))} className="text-left text-[15.5px] py-2.5 flex items-center justify-between gap-3 muted hover:text-[var(--ink)]" style={{ borderTop: "1px solid var(--line)" }}>
               {c.label} <Icon name="chevronR" size={13} />
             </button>
           ))}
@@ -1273,11 +1296,11 @@ function Nav({ onLogoClick, onOpenMenu, onExplore, onNews, onOpenFav, onOpenAuth
         <div className="flex items-center gap-6">
           <button onClick={onOpenMenu} className="flex items-center gap-2.5" aria-label="Abrir menú">
             <Icon name="menu" size={20} />
-            <span className="label hidden md:inline" style={{ fontSize: 10 }}>Menú</span>
+            <span className="label hidden md:inline" style={{ fontSize: 12 }}>Menú</span>
           </button>
           <nav className="hidden lg:flex items-center gap-6">
-            <button onClick={onExplore} className="label hover:opacity-60" style={{ fontSize: 10 }}>Especialidades</button>
-            <button onClick={onNews} className="label hover:opacity-60" style={{ fontSize: 10 }}>Actualidad</button>
+            <button onClick={onExplore} className="label hover:opacity-60" style={{ fontSize: 12 }}>Especialidades</button>
+            <button onClick={onNews} className="label hover:opacity-60" style={{ fontSize: 12 }}>Actualidad</button>
           </nav>
         </div>
 
@@ -1294,7 +1317,7 @@ function Nav({ onLogoClick, onOpenMenu, onExplore, onNews, onOpenFav, onOpenAuth
           </button>
           <button onClick={onOpenAuth} className="flex items-center gap-2" aria-label={user ? user.name : "Acceder"}>
             <Icon name="user" size={18} />
-            <span className="label hidden md:inline" style={{ fontSize: 10 }}>{user ? user.name : "Acceder"}</span>
+            <span className="label hidden md:inline" style={{ fontSize: 12 }}>{user ? user.name : "Acceder"}</span>
           </button>
         </div>
       </div>
@@ -1313,7 +1336,7 @@ function Nav({ onLogoClick, onOpenMenu, onExplore, onNews, onOpenFav, onOpenAuth
             {query.trim() && (
               <div className="max-h-[58vh] overflow-y-auto scrollbar-none mt-3">
                 {results.length === 0 ? (
-                  <p className="text-[13.5px] muted py-4">Sin resultados. Prueba con otro nombre o describe tu caso.</p>
+                  <p className="text-[15px] muted py-4">Sin resultados. Prueba con otro nombre o describe tu caso.</p>
                 ) : results.map(f => (
                   <div key={f.name} className="flex items-center gap-3.5 py-3" style={{ borderBottom: "1px solid var(--line)" }}>
                     <FirmCrest name={f.name} size={44} />
@@ -1322,7 +1345,7 @@ function Nav({ onLogoClick, onOpenMenu, onExplore, onNews, onOpenFav, onOpenAuth
                         <div className="f-display text-[1.1rem] truncate">{f.name}</div>
                         {f.promoted && <span className="tag-promo shrink-0">Anuncio</span>}
                       </div>
-                      <div className="text-[12px] muted">{f.city} · <Fee tier={f.priceTier} /></div>
+                      <div className="text-[13.5px] muted">{f.city} · <Fee tier={f.priceTier} /></div>
                     </div>
                     <button onClick={() => contact(f)} className="link-u shrink-0">Contactar</button>
                   </div>
@@ -1333,7 +1356,7 @@ function Nav({ onLogoClick, onOpenMenu, onExplore, onNews, onOpenFav, onOpenAuth
                     {alsoInterested.map(f => (
                       <div key={f.name} className="flex items-center gap-3 py-2">
                         <FirmCrest name={f.name} size={30} />
-                        <div className="text-[14px] f-display truncate">{f.name}</div>
+                        <div className="text-[15.5px] f-display truncate">{f.name}</div>
                       </div>
                     ))}
                   </div>
@@ -1397,6 +1420,16 @@ function App() {
     setPage("busqueda");
     toTop();
   };
+  // Búsqueda por caso desde la portada: si aún no se aceptaron las condiciones, se aceptan primero y luego se busca
+  const [pendingQuery, setPendingQuery] = useState(null);
+  const caseSearch = (q) => {
+    if (!termsAccepted) { setPendingQuery(q); goEspecialidades(); return; }
+    runSearch(q);
+  };
+  const acceptTerms = () => {
+    setTermsAccepted(true);
+    if (pendingQuery) { const q = pendingQuery; setPendingQuery(null); runSearch(q); }
+  };
   const logout = () => {
     setUser(null);
     setShowFav(false);
@@ -1412,7 +1445,7 @@ function App() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <div className="gutter py-2.5 text-center text-[10px] tracking-[0.22em] uppercase" style={{ background: "#182544", color: "#E9E3D8" }}>
+      <div className="gutter py-2.5 text-center text-[12.5px] tracking-[0.12em] uppercase" style={{ background: "#182544", color: "#E9E3D8" }}>
         Primera consulta confidencial<span className="hidden sm:inline"> <span style={{ color: "#D1A54A" }}>·</span> Sede en Bilbao</span>
       </div>
       <Nav onLogoClick={goHome} onOpenMenu={() => setShowMenu(true)} onExplore={goEspecialidades} onNews={goNews} onOpenFav={() => setShowFav(true)} onOpenAuth={() => user ? setShowFav(true) : setShowAuth(true)} onContact={openContact} onRequireTerms={goEspecialidades} onSearch={runSearch} termsAccepted={termsAccepted} favCount={favorites.length} user={user} />
@@ -1420,11 +1453,11 @@ function App() {
       <main className="flex-1">
         {page === "home" ? (
           <>
-            <Hero onExplore={goEspecialidades} onNews={goNews} />
+            <Hero onCase={caseSearch} />
             <Promises />
             <HomeCategories onPick={pickCategory} onExplore={goEspecialidades} />
-            <OfertasBufetes favorites={favorites} toggleFav={toggleFav} onContact={openContact} />
             <NewsFeed />
+            <OfertasBufetes favorites={favorites} toggleFav={toggleFav} onContact={openContact} />
             <JoinFirmsSection onOpen={() => setShowJoinFirm(true)} />
           </>
         ) : page === "busqueda" ? (
@@ -1436,7 +1469,7 @@ function App() {
           <>
             <BackHome />
             {!termsAccepted ? (
-              <TermsGate onAccept={() => setTermsAccepted(true)} />
+              <TermsGate onAccept={acceptTerms} />
             ) : selectedCategory ? (
               <CategoryResults categoryId={selectedCategory} favorites={favorites} toggleFav={toggleFav} onBack={() => setSelectedCategory(null)} onContact={openContact} />
             ) : (
@@ -1453,7 +1486,7 @@ function App() {
             <div className="f-display text-[1.8rem] tracking-[0.32em] pl-[0.32em]">LEXA LG</div>
             <div className="eyebrow justify-center mt-3">Legal Group · desde 2004</div>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10 text-[13.5px]">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10 text-[15px]">
             <div className="col-span-2 md:col-span-1">
               <div className="label mb-4">La casa</div>
               <p className="muted leading-relaxed max-w-xs">Plataforma de intermediación que conecta clientes internacionales con despachos seleccionados en España.</p>
@@ -1476,7 +1509,7 @@ function App() {
               <button onClick={() => setShowJoinFirm(true)} className="link-u mt-6">Únete como despacho</button>
             </div>
           </div>
-          <div className="mt-14 pt-6 flex flex-col md:flex-row justify-between gap-3 text-[11.5px] muted" style={{ borderTop: "1px solid var(--line)" }}>
+          <div className="mt-14 pt-6 flex flex-col md:flex-row justify-between gap-3 text-[13px] muted" style={{ borderTop: "1px solid var(--line)" }}>
             <span>© Lexa LG — Legal Group</span>
             <span>Prototipo demostrativo. Los despachos y datos mostrados son ficticios.</span>
           </div>
