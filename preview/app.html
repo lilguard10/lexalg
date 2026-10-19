@@ -510,15 +510,64 @@ function CategoryTile({ c, i, onPick }) {
   );
 }
 
+// Carrusel: se desliza con el dedo, con el ratón (arrastrando) o con las flechas
+function useDragScroll() {
+  const ref = useRef(null);
+  const drag = useRef(null);
+  const onPointerDown = (e) => {
+    if (e.pointerType !== "mouse" || e.button !== 0) return;
+    const el = ref.current;
+    drag.current = { x: e.clientX, left: el.scrollLeft, moved: false };
+    el.style.scrollSnapType = "none";
+    el.style.cursor = "grabbing";
+  };
+  const onPointerMove = (e) => {
+    const d = drag.current; if (!d) return;
+    const dx = e.clientX - d.x;
+    if (Math.abs(dx) > 5) d.moved = true;
+    ref.current.scrollLeft = d.left - dx;
+  };
+  const end = () => {
+    const el = ref.current; if (!drag.current || !el) return;
+    el.style.cursor = ""; el.style.scrollSnapType = "";
+    setTimeout(() => { drag.current = null; }, 0);
+  };
+  // Si se ha arrastrado, el clic que sigue no abre la especialidad
+  const onClickCapture = (e) => { if (drag.current?.moved) { e.stopPropagation(); e.preventDefault(); } };
+  const step = (dir) => {
+    const el = ref.current; if (!el) return;
+    const tile = el.firstElementChild;
+    el.scrollBy({ left: dir * ((tile?.offsetWidth || 240) + 12), behavior: "smooth" });
+  };
+  return { ref, step, handlers: { onPointerDown, onPointerMove, onPointerUp: end, onPointerLeave: end, onClickCapture, onDragStart: e => e.preventDefault() } };
+}
+
 function HomeCategories({ onPick, onExplore }) {
+  const { ref, step, handlers } = useDragScroll();
+  const [edge, setEdge] = useState({ start: true, end: false });
+  const update = () => {
+    const el = ref.current; if (!el) return;
+    setEdge({ start: el.scrollLeft < 8, end: el.scrollLeft + el.clientWidth > el.scrollWidth - 8 });
+  };
+  useEffect(() => { update(); window.addEventListener("resize", update); return () => window.removeEventListener("resize", update); }, []);
+  const arrow = (dir, disabled) => (
+    <button onClick={() => step(dir)} disabled={disabled} aria-label={dir < 0 ? "Especialidades anteriores" : "Más especialidades"}
+      className="w-11 h-11 flex items-center justify-center transition-opacity disabled:opacity-30" style={{ border: "1px solid var(--ink)" }}>
+      <Icon name={dir < 0 ? "chevronL" : "chevronR"} size={18} />
+    </button>
+  );
   return (
     <section className="gutter py-20 md:py-28">
       <div className="max-w-7xl mx-auto">
         <SectionHead eyebrow="Especialidades" title="Cada caso tiene su despacho">
           <button onClick={onExplore} className="link-u">Ver todas</button>
         </SectionHead>
-        <div className="snap-row scrollbar-none">
+        <div ref={ref} onScroll={update} {...handlers} className="snap-row scrollbar-none select-none" style={{ cursor: "grab", touchAction: "pan-x pan-y" }}>
           {CATEGORIES.map((c, i) => <CategoryTile key={c.id} c={c} i={i} onPick={onPick} />)}
+        </div>
+        <div className="flex items-center justify-between gap-4 mt-6 lg:hidden">
+          <span className="text-[14px] muted flex items-center gap-2">Desliza para ver las {CATEGORIES.length} especialidades</span>
+          <div className="flex gap-2">{arrow(-1, edge.start)}{arrow(1, edge.end)}</div>
         </div>
       </div>
     </section>
