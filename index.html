@@ -662,6 +662,8 @@ function CategoryResults({ categoryId, favorites, toggleFav, onBack, onContact }
             onComplete={(ans) => { setRefineAnswers(ans); setRefining(false); }} />
         )}
 
+        <DoneForYou />
+
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-3 md:gap-x-6 gap-y-12">
           {matches.map((firm, i) => (
             <FirmCard key={firm.name} firm={firm} isFav={favorites.includes(firm.name)} onToggleFav={toggleFav} onContact={() => onContact(firm)} topPick={!!refineAnswers && i === 0} ctx={{ categoryId, answers: refineAnswers }} />
@@ -709,6 +711,7 @@ function SearchResultsPage({ query, favorites, toggleFav, onContact, onPickCateg
           <p className="text-[16.5px] muted max-w-xl mx-auto text-center">No encontramos despachos para «{query}». Prueba con otro nombre o describe tu caso con otras palabras (p. ej. «impuestos», «visado», «herencia»).</p>
         ) : (
           <>
+            <DoneForYou />
             <div className="eyebrow justify-center mb-8">Bufetes que encajan · {results.length}</div>
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-3 md:gap-x-6 gap-y-12 mb-20">
               {results.map(firm => (
@@ -873,22 +876,113 @@ function ConsentModal({ onAccept, onClose }) {
   );
 }
 
-/* ---------------------------------- FORMULARIO DE CONTACTO CON EL BUFETE ---------------------------------- */
-function ContactFormModal({ firm, onClose, onSubmit }) {
+/* ---------------------------------- NIVELES DE SERVICIO PARA EL CLIENTE ---------------------------------- */
+// Los plazos solo prometen lo que depende de Lexa LG (revisar el caso) y huecos que el despacho ya tiene abiertos en su agenda.
+const CLIENT_PLANS = [
+  { id: "free", name: "Gratis", price: 0, lines: ["Escribes tú a los despachos que elijas", "Respuesta habitual: 3–7 días", "Tú explicas tu caso"] },
+  { id: "prio", name: "Prioritario", price: 39, tag: "Recomendado", lines: ["Revisamos tu caso en 24 h laborables", "Te proponemos los 3 despachos que mejor encajan", "Reunión en un hueco libre de su agenda en los 2 días laborables siguientes", "Si el despacho no encaja, te devolvemos los 39 €"] },
+  { id: "prem", name: "Premium", price: 79, lines: ["Revisamos tu caso en 4 h laborables", "Nuestra elección: el despacho ideal para ti, con 2 alternativas y sus honorarios orientativos", "Reunión el siguiente día laborable", "Tu caso resumido y la lista de documentos que debes llevar", "Un gestor de Lexa LG te acompaña 30 días", "Si el despacho no encaja, te devolvemos el importe"] },
+];
+const CLIENT_EXTRAS = [
+  { id: "interp", name: "Intérprete en la reunión", price: 49 },
+  { id: "more", name: "Otros 3 despachos recomendados", price: 19 },
+  { id: "same", name: "Reunión el mismo día (si no hay hueco, se devuelve)", price: 30 },
+];
+const planById = (id) => CLIENT_PLANS.find(p => p.id === id);
+const PlansContext = React.createContext(() => {});
+
+// Aviso "que lo hagamos por ti" en los listados
+function DoneForYou() {
+  const openPlans = React.useContext(PlansContext);
+  return (
+    <div className="mb-12 p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-5" style={{ border: "1px solid var(--ink)" }}>
+      <div className="flex gap-4 min-w-0">
+        <span className="shrink-0"><Logo size={40} /></span>
+        <div className="min-w-0">
+          <div className="eyebrow mb-1.5">¿Prefieres que lo hagamos por ti?</div>
+          <p className="text-[16.5px] leading-relaxed">Revisamos tu caso y te proponemos los despachos que mejor encajan, con reunión confirmada. <span className="muted">Desde 39 €.</span></p>
+        </div>
+      </div>
+      <button onClick={() => openPlans(null)} className="btn btn-primary shrink-0">Ver opciones</button>
+    </div>
+  );
+}
+
+function PlanPicker({ firm, onClose, onChoose }) {
+  const [plan, setPlan] = useState("prio");
+  const [extras, setExtras] = useState([]);
+  const p = planById(plan);
+  const total = p.price + (p.price ? extras.reduce((s, id) => s + CLIENT_EXTRAS.find(e => e.id === id).price, 0) : 0);
+  const toggle = (id) => setExtras(x => x.includes(id) ? x.filter(i => i !== id) : [...x, id]);
+  const freeDisabled = !firm;
+  return (
+    <div className="modal-wrap">
+      <div className="modal max-w-2xl scrollbar-none" style={{ padding: "32px 20px" }}>
+        <button type="button" onClick={onClose} className="absolute top-5 right-5 muted hover:opacity-70" aria-label="Cerrar"><Icon name="x" size={18} /></button>
+        <ModalHead eyebrow={firm ? firm.name : "Tu caso"} title="¿Cómo quieres seguir?" sub="Ves el precio antes de darnos ningún dato." />
+
+        <div className="grid md:grid-cols-3 gap-3" role="radiogroup" aria-label="Nivel de servicio">
+          {CLIENT_PLANS.map(pl => {
+            const on = plan === pl.id;
+            const disabled = pl.id === "free" && freeDisabled;
+            return (
+              <button key={pl.id} type="button" role="radio" aria-checked={on} disabled={disabled} onClick={() => setPlan(pl.id)}
+                className="text-left p-5 flex flex-col gap-3 transition-colors disabled:opacity-45 disabled:cursor-not-allowed"
+                style={{ border: on ? "2px solid var(--ink)" : "1px solid var(--line)", margin: on ? 0 : 1, background: on ? "var(--surface)" : "transparent" }}>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="f-display text-[1.45rem] leading-none">{pl.name}</span>
+                  {pl.tag && <span className="pill-lacre" style={{ background: "var(--ink)", color: "var(--on-ink)" }}>{pl.tag}</span>}
+                </div>
+                <div className="text-[1.6rem] f-display leading-none">{pl.price ? `${pl.price} €` : "0 €"}<span className="text-[14px] muted"> {pl.price ? "por caso" : ""}</span></div>
+                <ul className="space-y-1.5 text-[14.5px] leading-snug">
+                  {pl.lines.map(l => <li key={l} className="flex gap-2"><span className="shrink-0 mt-0.5" style={{ color: "var(--accent)" }}><Icon name="check" size={15} /></span>{l}</li>)}
+                </ul>
+                {disabled && <span className="text-[13.5px] muted">Elige un despacho de la lista para escribirle gratis.</span>}
+              </button>
+            );
+          })}
+        </div>
+
+        {p.price > 0 && (
+          <div className="mt-7">
+            <div className="eyebrow mb-3">Extras</div>
+            {CLIENT_EXTRAS.map(e => (
+              <label key={e.id} htmlFor={`extra-${e.id}`} className="flex items-center gap-3 py-3 cursor-pointer" style={{ borderTop: "1px solid var(--line)" }}>
+                <input id={`extra-${e.id}`} type="checkbox" checked={extras.includes(e.id)} onChange={() => toggle(e.id)} className="w-4 h-4 shrink-0" style={{ accentColor: "var(--ink)" }} />
+                <span className="flex-1 text-[15.5px]">{e.name}</span>
+                <span className="f-mono text-[15.5px]">+{e.price} €</span>
+              </label>
+            ))}
+          </div>
+        )}
+
+        <p className="text-[14px] muted mt-6 text-center">La reunión con el despacho siempre es gratuita. Lo que pagas es el servicio de Lexa LG, nunca los honorarios del abogado.</p>
+
+        <button onClick={() => onChoose({ plan, extras: p.price ? extras : [], total })} className="btn btn-primary w-full mt-6">
+          {p.price ? `Continuar · ${total} €` : "Continuar gratis"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------------- FORMULARIO DE CONTACTO ---------------------------------- */
+function ContactFormModal({ firm, choice, onClose, onSubmit }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [country, setCountry] = useState("");
+  const [caseText, setCaseText] = useState("");
   const [sent, setSent] = useState(false);
-  const [prioInterest, setPrioInterest] = useState(false);
-
+  const p = planById(choice.plan);
   const canSend = name.trim() && email.trim();
 
   const submit = (e) => {
     e.preventDefault();
     if (!canSend) return;
+    if (p.price) { onSubmit({ name, email }); return; }
     setSent(true);
-    setTimeout(() => onSubmit({ name, email, phone, country }), 1400);
+    setTimeout(onClose, 1800);
   };
 
   return (
@@ -896,14 +990,14 @@ function ContactFormModal({ firm, onClose, onSubmit }) {
       <div className="modal max-w-md scrollbar-none">
         {!sent && <button type="button" onClick={onClose} className="absolute top-5 right-5 muted hover:opacity-70" aria-label="Cerrar"><Icon name="x" size={18} /></button>}
         {sent ? (
-          <SentState title="Solicitud enviada">{firm.name} recibirá tu consulta y se pondrá en contacto contigo.</SentState>
+          <SentState title="Solicitud enviada">{firm.name} recibirá tu consulta. La respuesta habitual llega en 3–7 días.</SentState>
         ) : (
           <form onSubmit={submit}>
-            <div className="flex flex-col items-center text-center mb-8">
-              <FirmCrest name={firm.name} size={64} />
-              <div className="eyebrow mt-5">Contactar con</div>
-              <h3 className="f-display text-[1.8rem] leading-tight mt-1">{firm.name}</h3>
-              <p className="text-[14px] muted mt-3 flex items-center gap-2"><Icon name="lock" size={12} /> Estos datos se comparten únicamente con este despacho.</p>
+            <div className="flex flex-col items-center text-center mb-7">
+              {firm ? <FirmCrest name={firm.name} size={64} /> : <Logo size={64} />}
+              <div className="eyebrow mt-5">{p.name}{p.price ? ` · ${choice.total} €` : ""}</div>
+              <h3 className="f-display text-[1.8rem] leading-tight mt-1">{firm ? firm.name : "Cuéntanos tu caso"}</h3>
+              <p className="text-[14px] muted mt-3 flex items-center gap-2"><Icon name="lock" size={13} /> {p.price ? "Solo lo ve el equipo de Lexa LG y los despachos que te propongamos." : "Estos datos se comparten únicamente con este despacho."}</p>
             </div>
 
             <div className="space-y-6">
@@ -915,12 +1009,16 @@ function ContactFormModal({ firm, onClose, onSubmit }) {
                 <label htmlFor="contact-email" className="field-label">Correo electrónico</label>
                 <input id="contact-email" value={email} onChange={e => setEmail(e.target.value)} type="email" className="field" />
               </div>
+              <div>
+                <label htmlFor="contact-case" className="field-label mb-2">Describe tu caso (opcional)</label>
+                <textarea id="contact-case" rows={3} value={caseText} onChange={e => setCaseText(e.target.value)} className="field" placeholder="Qué ha pasado, fechas importantes, qué necesitas…" />
+              </div>
             </div>
 
-            <div className="eyebrow mt-10 mb-1" style={{ color: "var(--accent)" }}>Opcional · agiliza el contacto</div>
+            <div className="eyebrow mt-9 mb-1">Opcional · agiliza el contacto</div>
             <div className="space-y-6">
               <div>
-                <label htmlFor="contact-phone" className="field-label">Número de teléfono móvil</label>
+                <label htmlFor="contact-phone" className="field-label">Teléfono móvil</label>
                 <input id="contact-phone" value={phone} onChange={e => setPhone(e.target.value)} type="tel" placeholder="Ej. +34 600 000 000" className="field" />
               </div>
               <div>
@@ -929,16 +1027,114 @@ function ContactFormModal({ firm, onClose, onSubmit }) {
               </div>
             </div>
 
-            <div className="mt-8 p-5 flex items-center justify-between gap-3" style={{ background: "var(--surface-2)" }}>
-              <div className="min-w-0">
-                <div className="label">Reunión prioritaria en 48 h</div>
-                <div className="text-[14px] muted mt-1">Próximamente. ¿Te interesaría? Te avisamos cuando esté disponible.</div>
-              </div>
-              <button type="button" onClick={() => setPrioInterest(true)} disabled={prioInterest} className="link-u shrink-0 disabled:opacity-60">
-                {prioInterest ? "Apuntado" : "Me interesa"}
-              </button>
-            </div>
+            <button type="submit" disabled={!canSend} className="btn btn-primary w-full mt-9">{p.price ? `Ir al pago · ${choice.total} €` : "Enviar solicitud"}</button>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}
 
+function PayModal({ firm, choice, who, onClose }) {
+  const [paid, setPaid] = useState(false);
+  const p = planById(choice.plan);
+  const rows = [[`Servicio ${p.name}`, p.price], ...choice.extras.map(id => { const e = CLIENT_EXTRAS.find(x => x.id === id); return [e.name, e.price]; })];
+  return (
+    <div className="modal-wrap">
+      <div className="modal max-w-md scrollbar-none">
+        <button type="button" onClick={onClose} className="absolute top-5 right-5 muted hover:opacity-70" aria-label="Cerrar"><Icon name="x" size={18} /></button>
+        {paid ? (
+          <SentState title="Reserva confirmada" onClose={onClose}>
+            Revisaremos tu caso en {choice.plan === "prem" ? "4" : "24"} h laborables{firm ? `, teniendo en cuenta ${firm.name},` : ""} y te propondremos despacho por correo, a {who.email}. <span className="block mt-3 text-[13px]">Prototipo: no se ha realizado ningún cargo.</span>
+          </SentState>
+        ) : (
+          <>
+            <ModalHead eyebrow="Pago" title="Resumen" />
+            <dl>
+              {rows.map(([k, v]) => (
+                <div key={k} className="flex justify-between gap-4 py-3 text-[15.5px]" style={{ borderTop: "1px solid var(--line)" }}>
+                  <dt>{k}</dt><dd className="f-mono">{v} €</dd>
+                </div>
+              ))}
+              <div className="flex justify-between gap-4 py-4 text-[17px]" style={{ borderTop: "1px solid var(--ink)", fontWeight: 700 }}>
+                <dt>Total (IVA incl.)</dt><dd className="f-mono">{choice.total} €</dd>
+              </div>
+            </dl>
+            <p className="text-[14px] muted mt-2">Si el despacho propuesto no encaja con tu caso, te devolvemos el importe. La reunión con el abogado es gratuita.</p>
+            <div className="mt-6 p-4 text-[14px] flex gap-3" style={{ background: "var(--surface-2)" }}>
+              <Icon name="lock" size={16} className="shrink-0 mt-0.5" />
+              <span>Aquí irá el pago seguro con tarjeta (Stripe). En este prototipo no se pide ningún dato de pago.</span>
+            </div>
+            <button onClick={() => setPaid(true)} className="btn btn-primary w-full mt-6">Confirmar reserva (demo) · {choice.total} €</button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------------- PLANES PARA EMPRESAS ---------------------------------- */
+const BUSINESS_PLANS = [
+  { id: "emp", name: "Empresas", price: 99, lines: ["Hasta 3 casos al mes en nivel Prioritario", "Panel con todos tus casos", "Una sola factura mensual"] },
+  { id: "plus", name: "Empresas Plus", price: 249, lines: ["Casos ilimitados en nivel Premium", "Gestor de cuenta fijo", "Panel y factura mensual"] },
+];
+
+function EmpresasSection({ onRequest }) {
+  return (
+    <section id="empresas" className="gutter py-20 md:py-28" style={{ borderTop: "1px solid var(--line)" }}>
+      <div className="max-w-5xl mx-auto">
+        <SectionHead eyebrow="Para empresas" title="Tus asuntos legales, cubiertos cada mes">
+          <p className="text-[16.5px] muted max-w-xl">Para pymes, family offices y gestorías con casos cada mes. Una cuota fija en lugar de pagar caso a caso.</p>
+        </SectionHead>
+        <div className="grid md:grid-cols-2 gap-4">
+          {BUSINESS_PLANS.map((b, i) => (
+            <div key={b.id} className="p-7 md:p-9 flex flex-col" style={{ background: i ? "#182544" : "var(--surface)", color: i ? "#EEE8DE" : "var(--ink)", border: i ? "0" : "1px solid var(--line)" }}>
+              <div className="f-display text-[1.8rem]">{b.name}</div>
+              <div className="mt-2 f-display text-[2.6rem] leading-none">{b.price} €<span className="text-[15px]" style={{ opacity: .7 }}> / mes</span></div>
+              <ul className="mt-6 space-y-2.5 text-[16px] flex-1">
+                {b.lines.map(l => <li key={l} className="flex gap-2.5"><span className="shrink-0 mt-0.5" style={{ color: i ? "#D1A54A" : "var(--accent)" }}><Icon name="check" size={16} /></span>{l}</li>)}
+              </ul>
+              <button onClick={() => onRequest(b.id)} className="btn mt-8" style={i ? { background: "#EEE8DE", color: "#182544" } : { background: "var(--ink)", color: "var(--on-ink)" }}>Solicitar {b.name}</button>
+            </div>
+          ))}
+        </div>
+        <p className="text-[14.5px] muted text-center mt-6">Con 3 casos al mes, el plan Empresas ya sale más barato que pagar caso a caso (3 × 39 € = 117 €).</p>
+      </div>
+    </section>
+  );
+}
+
+function BusinessModal({ initialPlan, onClose }) {
+  const [company, setCompany] = useState("");
+  const [email, setEmail] = useState("");
+  const [plan, setPlan] = useState(initialPlan || "emp");
+  const [sent, setSent] = useState(false);
+  const canSend = company.trim() && email.trim();
+  return (
+    <div className="modal-wrap">
+      <div className="modal max-w-md scrollbar-none">
+        <button type="button" onClick={onClose} className="absolute top-5 right-5 muted hover:opacity-70" aria-label="Cerrar"><Icon name="x" size={18} /></button>
+        {sent ? (
+          <SentState title="Solicitud recibida" onClose={onClose}>Te contactaremos para activar tu plan y preparar tu panel de casos.</SentState>
+        ) : (
+          <form onSubmit={(e) => { e.preventDefault(); if (canSend) setSent(true); }}>
+            <ModalHead eyebrow="Para empresas" title="Solicitar plan" />
+            <div className="space-y-6">
+              <div>
+                <label htmlFor="biz-company" className="field-label">Empresa</label>
+                <input id="biz-company" value={company} onChange={e => setCompany(e.target.value)} className="field" />
+              </div>
+              <div>
+                <label htmlFor="biz-email" className="field-label">Correo electrónico</label>
+                <input id="biz-email" type="email" value={email} onChange={e => setEmail(e.target.value)} className="field" />
+              </div>
+              <div>
+                <label htmlFor="biz-plan" className="field-label">Plan</label>
+                <select id="biz-plan" value={plan} onChange={e => setPlan(e.target.value)} className="field">
+                  {BUSINESS_PLANS.map(b => <option key={b.id} value={b.id}>{b.name} · {b.price} €/mes</option>)}
+                </select>
+              </div>
+            </div>
             <button type="submit" disabled={!canSend} className="btn btn-primary w-full mt-9">Enviar solicitud</button>
           </form>
         )}
@@ -1511,8 +1707,9 @@ function App() {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [contactFirm, setContactFirm] = useState(null);
-  const [contactStage, setContactStage] = useState("policy"); // policy | form
+  // Flujo de contacto: plan (precio visible) → consentimiento → datos → pago (si es de pago)
+  const [contact, setContact] = useState(null); // { firm, stage: plan|policy|form|pay, choice, who }
+  const [bizPlan, setBizPlan] = useState(null);
   const [showAuth, setShowAuth] = useState(false);
   const [showFav, setShowFav] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -1526,8 +1723,9 @@ function App() {
     setFavorites(prev => prev.includes(name) ? prev.filter(n => n !== name) : [...prev, name]);
   };
 
-  const openContact = (firm) => { setContactFirm(firm); setContactStage("policy"); };
-  const closeContact = () => { setContactFirm(null); setContactStage("policy"); };
+  const openContact = (firm) => setContact({ firm, stage: "plan" });
+  const closeContact = () => setContact(null);
+  const nextStage = (patch) => setContact(c => ({ ...c, ...patch }));
 
   const toTop = () => window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
   const goEspecialidades = () => {
@@ -1581,6 +1779,7 @@ function App() {
 
   return (
     <FirmSheetContext.Provider value={openFirm}>
+    <PlansContext.Provider value={openContact}>
     <div className="min-h-screen flex flex-col">
       <div className="gutter py-2.5 text-center text-[12.5px] tracking-[0.12em] uppercase" style={{ background: "#182544", color: "#E9E3D8" }}>
         Primera consulta confidencial<span className="hidden sm:inline"> <span style={{ color: "#D1A54A" }}>·</span> Sede en Bilbao</span>
@@ -1595,6 +1794,7 @@ function App() {
             <HomeCategories onPick={pickCategory} onExplore={goEspecialidades} />
             <NewsFeed />
             <OfertasBufetes favorites={favorites} toggleFav={toggleFav} onContact={openContact} />
+            <EmpresasSection onRequest={setBizPlan} />
             <JoinFirmsSection onOpen={() => setShowJoinFirm(true)} />
           </>
         ) : page === "busqueda" ? (
@@ -1653,19 +1853,11 @@ function App() {
         </div>
       </footer>
 
-      {contactFirm && contactStage === "policy" && (
-        <ConsentModal
-          onClose={closeContact}
-          onAccept={() => setContactStage("form")}
-        />
-      )}
-      {contactFirm && contactStage === "form" && (
-        <ContactFormModal
-          firm={contactFirm}
-          onClose={closeContact}
-          onSubmit={closeContact}
-        />
-      )}
+      {contact?.stage === "plan" && <PlanPicker firm={contact.firm} onClose={closeContact} onChoose={(choice) => nextStage({ choice, stage: "policy" })} />}
+      {contact?.stage === "policy" && <ConsentModal onClose={closeContact} onAccept={() => nextStage({ stage: "form" })} />}
+      {contact?.stage === "form" && <ContactFormModal firm={contact.firm} choice={contact.choice} onClose={closeContact} onSubmit={(who) => nextStage({ who, stage: "pay" })} />}
+      {contact?.stage === "pay" && <PayModal firm={contact.firm} choice={contact.choice} who={contact.who} onClose={closeContact} />}
+      {bizPlan && <BusinessModal initialPlan={bizPlan} onClose={() => setBizPlan(null)} />}
       {showMenu && <MenuDrawer onClose={() => setShowMenu(false)} onPick={pickCategory} onExplore={goEspecialidades} onNews={goNews} onOfertas={() => goSection("ofertas")} onJoin={() => setShowJoinFirm(true)} />}
       {showAuth && <AuthModal onClose={() => setShowAuth(false)} onLogin={(u) => { setUser(u); setShowAuth(false); }} />}
       {showFav && <FavoritesPanel favorites={favorites} toggleFav={toggleFav} onClose={() => setShowFav(false)} user={user} onLogout={logout} />}
@@ -1680,6 +1872,7 @@ function App() {
 
       <Concierge onOpenWizard={goEspecialidades} />
     </div>
+    </PlansContext.Provider>
     </FirmSheetContext.Provider>
   );
 }
