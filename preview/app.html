@@ -1,0 +1,1519 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+</head>
+<body>
+<title>Lexa LG</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+<style>
+  /* Layout: maison de lujo — marfil y arena, campañas a sangre con textura de tejido, titulares serif ligeros, etiquetas en versalitas espaciadas, ángulos rectos. */
+  :root{
+    --bg:#FBF9F5;
+    --surface:#FFFFFF;
+    --surface-2:#F1EDE5;
+    --ink:#16223A;
+    --ink-2:#5E6573;
+    --line:rgba(22,34,58,.12);
+    --accent:#94712F;
+    --on-ink:#FBF9F5;
+    --hero-tone:#E3DBCE;
+    --overlay:rgba(22,34,58,.36);
+    --shadow:0 24px 60px -28px rgba(31,27,23,.28);
+    --f-display:'Cormorant Garamond', 'Times New Roman', Georgia, serif;
+    --f-body:'Jost', 'Helvetica Neue', Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#141210; --surface:#1B1815; --surface-2:#24201C; --ink:#EEE8DE; --ink-2:#A39A8F;
+      --line:rgba(238,232,222,.12); --accent:#D4AF63; --on-ink:#141210; --hero-tone:#2A2620;
+      --overlay:rgba(0,0,0,.6); --shadow:0 24px 60px -28px rgba(0,0,0,.8);
+      color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#141210; --surface:#1B1815; --surface-2:#24201C; --ink:#EEE8DE; --ink-2:#A39A8F;
+    --line:rgba(238,232,222,.12); --accent:#D4AF63; --on-ink:#141210; --hero-tone:#2A2620;
+    --overlay:rgba(0,0,0,.6); --shadow:0 24px 60px -28px rgba(0,0,0,.8);
+    color-scheme:dark;
+  }
+  html{ scroll-behavior:smooth; scroll-padding-top:calc(76px + env(safe-area-inset-top, 0px)); }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--bg); color:var(--ink); font-family:var(--f-body); font-weight:300; font-size:15px; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+  body::before{ content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top, 0px); z-index:45; background:var(--bg); }
+  ::selection{ background:var(--ink); color:var(--on-ink); }
+  button{ color:inherit; font-weight:inherit; }
+  strong{ font-weight:500; }
+  :focus-visible{ outline:1px solid var(--ink); outline-offset:3px; }
+
+  .gutter{ padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); }
+  @media (min-width:768px){ .gutter{ padding-left:max(40px, env(safe-area-inset-left, 0px)); padding-right:max(40px, env(safe-area-inset-right, 0px)); } }
+
+  .f-display{ font-family:var(--f-display); font-weight:400; text-wrap:balance; }
+  .f-mono{ font-variant-numeric:tabular-nums; }
+  .label{ font-size:11px; letter-spacing:.2em; text-transform:uppercase; font-weight:400; }
+  .eyebrow{ font-size:10.5px; letter-spacing:.24em; text-transform:uppercase; font-weight:400; color:var(--accent); display:flex; align-items:center; gap:10px; }
+  .muted{ color:var(--ink-2); }
+  .h-section{ font-family:var(--f-display); font-weight:300; font-size:clamp(2.1rem, 4.4vw, 3.4rem); line-height:1.04; text-wrap:balance; letter-spacing:-.005em; }
+  .rule{ width:36px; height:1px; background:currentColor; opacity:.5; }
+
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:10px; font-size:11px; letter-spacing:.2em; text-transform:uppercase; font-weight:400; padding:16px 30px; border:1px solid transparent; border-radius:0; transition:background-color .25s, color .25s, border-color .25s, opacity .25s; cursor:pointer; white-space:nowrap; }
+  .btn-primary{ background:var(--ink); color:var(--on-ink); border-color:var(--ink); }
+  .btn-primary:hover{ opacity:.86; }
+  .btn-primary:disabled{ background:var(--surface-2); border-color:var(--surface-2); color:var(--ink-2); cursor:not-allowed; opacity:1; }
+  .btn-outline{ border-color:var(--ink); color:var(--ink); background:transparent; }
+  .btn-outline:hover{ background:var(--ink); color:var(--on-ink); }
+  .btn-light{ border-color:rgba(251,249,246,.85); color:#FBF9F6; }
+  .btn-light:hover{ background:#FBF9F6; color:#1F1B17; }
+  .btn-sm{ padding:10px 16px; font-size:10px; }
+  .link{ color:var(--ink-2); display:inline-flex; align-items:center; gap:8px; font-size:11px; letter-spacing:.18em; text-transform:uppercase; }
+  .link:hover{ color:var(--ink); }
+  .link-u{ display:inline-flex; align-items:center; gap:8px; font-size:10.5px; letter-spacing:.2em; text-transform:uppercase; padding-bottom:4px; border-bottom:1px solid currentColor; transition:opacity .2s; }
+  .link-u:hover{ opacity:.6; }
+
+  .card{ background:var(--surface); border:1px solid var(--line); border-radius:0; }
+  .card-hover{ transition:border-color .25s; }
+  .card-hover:hover{ border-color:var(--ink-2); }
+  .chip{ font-size:10px; letter-spacing:.16em; text-transform:uppercase; padding:6px 10px; border:1px solid var(--line); color:var(--ink-2); }
+  .pill-lacre{ font-size:9.5px; letter-spacing:.18em; text-transform:uppercase; padding:5px 9px; background:var(--bg); color:var(--ink); }
+  .tag-promo{ font-size:9.5px; letter-spacing:.2em; text-transform:uppercase; color:var(--accent); }
+
+  /* Textura de tejido (twill) sobre un tono de lana */
+  .weave{ background-color:var(--tone, #C9B8A3);
+    background-image:
+      radial-gradient(120% 90% at 22% 12%, rgba(255,255,255,.26), transparent 55%),
+      radial-gradient(90% 70% at 88% 100%, rgba(0,0,0,.20), transparent 62%),
+      repeating-linear-gradient(45deg, rgba(255,255,255,.07) 0 1px, transparent 1px 3px),
+      repeating-linear-gradient(-45deg, rgba(0,0,0,.06) 0 1px, transparent 1px 4px); }
+  .zoom{ transition:transform 1.2s cubic-bezier(.2,.7,.2,1); }
+  .group:hover .zoom{ transform:scale(1.04); }
+
+  .deed{ background:var(--surface); color:var(--ink); border:1px solid var(--line); }
+  .icon-disc{ width:42px; height:42px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:1px solid var(--line); color:var(--ink); flex-shrink:0; }
+
+  .snap-row{ display:grid; grid-auto-flow:column; grid-auto-columns:72%; gap:12px; overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:4px; }
+  .snap-row > *{ scroll-snap-align:start; }
+  @media (min-width:640px){ .snap-row{ grid-auto-columns:40%; } }
+  @media (min-width:1024px){ .snap-row{ grid-auto-flow:row; grid-template-columns:repeat(5, minmax(0,1fr)); overflow:visible; } }
+
+  .field-label{ display:block; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:var(--ink-2); }
+  .field{ width:100%; background:transparent; border:0; border-bottom:1px solid var(--line); padding:10px 0; font:inherit; font-size:15px; color:var(--ink); outline:none; border-radius:0; }
+  .field:focus{ border-bottom-color:var(--ink); }
+  .field::placeholder{ color:var(--ink-2); opacity:.7; }
+  textarea.field{ border:1px solid var(--line); padding:12px; resize:none; }
+  textarea.field:focus{ border-color:var(--ink); }
+  select.field option{ background:var(--surface); color:var(--ink); }
+
+  .modal-wrap{ position:fixed; inset:0; z-index:60; background:var(--overlay); backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px); display:flex; align-items:center; justify-content:center;
+    padding:max(24px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(24px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+  .modal{ background:var(--bg); color:var(--ink); border:1px solid var(--line); width:100%; max-height:88vh; overflow-y:auto; padding:36px 28px; position:relative; box-shadow:var(--shadow); animation:fade .3s ease-out; }
+  @keyframes fade{ from{ transform:translateY(10px); } to{ transform:none; } }
+  .drawer{ animation:slide .35s cubic-bezier(.2,.7,.2,1); }
+  @keyframes slide{ from{ transform:translateX(-24px); } to{ transform:none; } }
+
+  .scrollbar-none::-webkit-scrollbar{ display:none; }
+  .scrollbar-none{ -ms-overflow-style:none; scrollbar-width:none; }
+  @media (prefers-reduced-motion: reduce){
+    *{ transition-duration:.01ms !important; animation-duration:.01ms !important; scroll-behavior:auto !important; }
+  }
+</style>
+<div id="root"></div>
+
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useRef, useMemo, useCallback } = React;
+
+/* ---------------------------------- ICONS ---------------------------------- */
+const Icon = ({ name, size = 18, className = "" }) => {
+  const common = { width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.6, strokeLinecap: "round", strokeLinejoin: "round", className };
+  const paths = {
+    scale: <><path d="M12 3v18"/><path d="M5 7l-3 6a4 4 0 0 0 8 0z"/><path d="M19 7l-3 6a4 4 0 0 0 8 0z"/><path d="M4 21h16"/><path d="M6 7h12"/><path d="M12 3l3 4h-6z"/></>,
+    home: <><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></>,
+    plane: <path d="M22 12l-6-2-5-8-2 1 3 7-6 1-2-3-2 1 2 4-2 1 1.6 2.3L5 19l3 1 2.7 2 1.6-1.6-1-2 4-1 1-2 3 3 1-2-2-6z"/>,
+    users: <><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c.6-3.4 3.3-5.5 6.5-5.5S15 16.6 15.5 20"/><circle cx="17" cy="9" r="2.6"/><path d="M15.8 14.3c2.4.3 4.2 2 4.7 4.7"/></>,
+    briefcase: <><rect x="3" y="7.5" width="18" height="12" rx="1.5"/><path d="M8 7.5V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v1.5"/><path d="M3 12.5h18"/></>,
+    shield: <path d="M12 2.5l7.5 3v5.7c0 5-3.2 8.6-7.5 10.3-4.3-1.7-7.5-5.3-7.5-10.3V5.5z"/>,
+    file: <><path d="M6 2.5h8l4 4v15H6z"/><path d="M14 2.5v4h4"/><path d="M9 12h6"/><path d="M9 15.5h6"/></>,
+    star: <path d="M12 2.5l2.9 6.2 6.8.7-5 4.7 1.4 6.9-6.1-3.5-6.1 3.5 1.4-6.9-5-4.7 6.8-.7z"/>,
+    starFill: <path d="M12 2.5l2.9 6.2 6.8.7-5 4.7 1.4 6.9-6.1-3.5-6.1 3.5 1.4-6.9-5-4.7 6.8-.7z" fill="currentColor" />,
+    check: <path d="M4 12.5l5.5 5.5L20 6.5"/>,
+    chevronR: <path d="M9 5l7 7-7 7"/>,
+    chevronL: <path d="M15 5l-7 7 7 7"/>,
+    x: <><path d="M6 6l12 12"/><path d="M18 6L6 18"/></>,
+    menu: <><path d="M4 6.5h16"/><path d="M4 12h16"/><path d="M4 17.5h16"/></>,
+    send: <path d="M22 2L11 13"/>,
+    send2: <path d="M22 2L15 22l-4-9-9-4z"/>,
+    lock: <><rect x="5" y="10.5" width="14" height="10" rx="1.5"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></>,
+    search: <><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.8-4.8"/></>,
+    pin: <><path d="M12 21s7-6.6 7-12a7 7 0 0 0-14 0c0 5.4 7 12 7 12z"/><circle cx="12" cy="9" r="2.4"/></>,
+    clock: <><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></>,
+    trend: <><path d="M3 17l6-6 4 4 8-8"/><path d="M15 6h6v6"/></>,
+    sparkle: <path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8z"/>,
+    bot: <><rect x="4.5" y="8" width="15" height="11" rx="2.5"/><circle cx="9" cy="13.3" r="1.2"/><circle cx="15" cy="13.3" r="1.2"/><path d="M12 8V4.5"/><circle cx="12" cy="3.3" r="1.2"/></>,
+    user: <><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c.9-4 3.8-6.2 7.5-6.2S18.6 16 19.5 20"/></>,
+    mail: <><rect x="3" y="5.5" width="18" height="13" rx="1.5"/><path d="M4 6.5l8 6.5 8-6.5"/></>,
+    logout: <><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></>,
+    percent: <><path d="M19 5L5 19"/><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/></>,
+    gem: <><path d="M6 3h12l3 6-9 12L3 9z"/><path d="M3 9h18"/><path d="M9 3l3 18 3-18"/></>,
+    badge: <><rect x="4" y="3" width="16" height="18" rx="1.5"/><circle cx="12" cy="10" r="3"/><path d="M8 17c.8-1.6 2.3-2.5 4-2.5s3.2.9 4 2.5"/></>,
+    chip: <><rect x="6" y="6" width="12" height="12" rx="1.5"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/></>,
+    gavel: <><path d="M14 4l6 6"/><path d="M11 7l6 6"/><path d="M12.5 5.5l5 5-3 3-5-5z"/><path d="M10 11l-7 7 2 2 7-7"/><path d="M13 21h8"/></>,
+  };
+  return <svg {...common}>{paths[name] || null}</svg>;
+};
+
+/* ---------------------------------- DATA ---------------------------------- */
+const CATEGORIES = [
+  { id: "propiedad", label: "Propiedad & Real Estate", icon: "home", n: 4 },
+  { id: "inmigracion", label: "Inmigración & Movilidad Global", icon: "plane", n: 4 },
+  { id: "familia", label: "Familia & Sucesiones", icon: "users", n: 3 },
+  { id: "empresas", label: "Empresas & Negocios", icon: "briefcase", n: 3 },
+  { id: "fiscal", label: "Fiscal & Tributario", icon: "percent", n: 3 },
+  { id: "patrimonio", label: "Patrimonio & Wealth Planning", icon: "gem", n: 3 },
+  { id: "laboral", label: "Laboral & Empleo", icon: "badge", n: 3 },
+  { id: "penal", label: "Penal Económico & Compliance", icon: "shield", n: 3 },
+  { id: "tecnologia", label: "Tecnología, Propiedad Intelectual & Datos", icon: "chip", n: 3 },
+  { id: "litigacion", label: "Litigación & Arbitraje", icon: "gavel", n: 3 },
+];
+
+const QUESTIONS = [
+  // Propiedad & Real Estate (4)
+  { cat: "propiedad", text: "¿Qué operación tienes en mente?", type: "select", options: ["Comprar", "Vender", "Alquilar", "Ya soy propietario"] },
+  { cat: "propiedad", text: "¿En qué zona se ubica el inmueble?", type: "select", options: ["Bilbao / Bizkaia", "Madrid", "Costa (Marbella, Alicante...)", "Otra provincia"] },
+  { cat: "propiedad", text: "¿Cuál es tu situación fiscal en España?", type: "select", options: ["Residente fiscal", "No residente", "Pendiente de determinar"] },
+  { cat: "propiedad", text: "¿Qué urgencia tiene el proceso?", type: "select", options: ["Inmediata (< 1 mes)", "Próximos 3 meses", "Sin prisa, explorando opciones"] },
+
+  // Inmigración & Movilidad Global (4)
+  { cat: "inmigracion", text: "¿Qué tipo de visado buscas?", type: "select", options: ["Nómada digital", "Residencia no lucrativa", "Visado de trabajo", "Reagrupación familiar"] },
+  { cat: "inmigracion", text: "¿Cuál es tu país de origen?", type: "text", placeholder: "Ej. Estados Unidos" },
+  { cat: "inmigracion", text: "¿Qué plazo de resolución esperas?", type: "select", options: ["Urgente (< 6 semanas)", "1–3 meses", "Flexible"] },
+  { cat: "inmigracion", text: "Idioma de preferencia para la asesoría", type: "select", options: ["Español", "Inglés", "Francés", "Alemán"] },
+
+  // Familia & Sucesiones (3)
+  { cat: "familia", text: "¿Qué tipo de asunto familiar te ocupa?", type: "select", options: ["Divorcio internacional", "Custodia transfronteriza", "Testamento en España", "Herencia / sucesión"] },
+  { cat: "familia", text: "A efectos fiscales, ¿eres residente o no residente?", type: "select", options: ["Residente", "No residente", "No lo sé"] },
+  { cat: "familia", text: "¿Cómo describirías el patrimonio a considerar?", type: "select", options: ["Principalmente inmobiliario", "Principalmente financiero", "Mixto / empresarial"] },
+
+  // Empresas & Negocios (3)
+  { cat: "empresas", text: "¿Qué necesitas resolver?", type: "select", options: ["Constituir sociedad", "Darme de alta como autónomo/a", "Asesoría mercantil continuada"] },
+  { cat: "empresas", text: "Sector de actividad", type: "text", placeholder: "Ej. tecnología, hostelería, consultoría" },
+  { cat: "empresas", text: "Volumen de facturación estimado (anual)", type: "select", options: ["< 100.000 €", "100.000 € – 1M €", "> 1M €"] },
+
+  // Fiscal & Tributario (3)
+  { cat: "fiscal", text: "¿Qué tema fiscal necesitas resolver?", type: "select", options: ["Declaración de la renta", "Inspección o requerimiento", "Residencia fiscal internacional", "Impuestos de mi empresa"] },
+  { cat: "fiscal", text: "¿Ante qué hacienda tributas?", type: "select", options: ["Hacienda Foral de Bizkaia", "Agencia Tributaria (Estado)", "Otro país", "No lo sé"] },
+  { cat: "fiscal", text: "¿Eres particular o empresa?", type: "select", options: ["Particular", "Autónomo/a", "Empresa"] },
+
+  // Patrimonio & Wealth Planning (3)
+  { cat: "patrimonio", text: "¿Qué quieres planificar?", type: "select", options: ["Protección del patrimonio", "Family office", "Relevo generacional", "Inversión inmobiliaria o financiera"] },
+  { cat: "patrimonio", text: "¿Dónde están tus activos principalmente?", type: "select", options: ["España", "España y otros países", "Fuera de España"] },
+  { cat: "patrimonio", text: "Volumen aproximado del patrimonio", type: "select", options: ["< 1M €", "1M € – 10M €", "> 10M €"] },
+
+  // Laboral & Empleo (3)
+  { cat: "laboral", text: "¿Qué situación laboral tienes?", type: "select", options: ["Despido", "Contrato de alta dirección", "Expatriación de trabajadores", "Acoso o conflicto laboral"] },
+  { cat: "laboral", text: "¿Consultas como trabajador o como empresa?", type: "select", options: ["Trabajador/a", "Empresa"] },
+  { cat: "laboral", text: "¿Hay plazos legales corriendo?", type: "select", options: ["Sí, me han notificado algo", "No", "No lo sé"] },
+
+  // Penal Económico & Compliance (3)
+  { cat: "penal", text: "¿Qué tipo de asunto es?", type: "select", options: ["Estafa o fraude", "Programa de compliance", "Delito societario", "Delito fiscal o blanqueo"] },
+  { cat: "penal", text: "¿En qué fase está?", type: "select", options: ["Prevención", "Investigación abierta", "Ya hay procedimiento judicial"] },
+  { cat: "penal", text: "¿Consultas como particular o empresa?", type: "select", options: ["Particular", "Empresa"] },
+
+  // Tecnología, PI & Datos (3)
+  { cat: "tecnologia", text: "¿Qué necesitas proteger o resolver?", type: "select", options: ["Registro de marca", "Patente o derechos de autor", "Protección de datos (RGPD)", "Contratos tecnológicos"] },
+  { cat: "tecnologia", text: "¿En qué ámbito?", type: "select", options: ["España", "Unión Europea", "Internacional"] },
+  { cat: "tecnologia", text: "¿Qué tipo de proyecto es?", type: "select", options: ["Startup", "Pyme", "Gran empresa", "Proyecto personal"] },
+
+  // Litigación & Arbitraje (3)
+  { cat: "litigacion", text: "¿Qué tipo de conflicto tienes?", type: "select", options: ["Reclamación de deuda o impago", "Arbitraje comercial", "Recurso contra una sentencia", "Mediación"] },
+  { cat: "litigacion", text: "Cuantía aproximada en juego", type: "select", options: ["< 50.000 €", "50.000 € – 500.000 €", "> 500.000 €"] },
+  { cat: "litigacion", text: "¿Hay otra parte extranjera?", type: "select", options: ["Sí", "No"] },
+];
+
+const FIRMS = [
+  { name: "Vanguardia & Asociados", city: "Bilbao", focus: ["propiedad", "empresas"], promoted: true, since: 1994, size: "40 socios", priceTier: 3, tags: ["comprar", "due diligence", "estructuración", "asesoría mercantil continuada", "constituir sociedad"], desc: "Referencia en due diligence inmobiliario y estructuración patrimonial para clientes internacionales en el norte de España." },
+  { name: "Nueva Vanguardia Legal", city: "Bilbao", focus: ["propiedad"], promoted: false, since: 2013, size: "14 socios", priceTier: 2, tags: ["comprar", "vender", "no residente"], desc: "Despacho joven especializado en compraventa residencial y fiscalidad para no residentes." },
+  { name: "Vanguardia Global Partners", city: "Madrid", focus: ["empresas", "propiedad"], promoted: false, since: 2009, size: "27 socios", priceTier: 2, tags: ["constituir sociedad", "comprar", "inversión"], desc: "Mercantil y estructuración de inversión inmobiliaria para grupos internacionales." },
+  { name: "Ibarra & Cruz Wealth", city: "Madrid", focus: ["familia", "propiedad"], promoted: false, since: 2001, size: "22 socios", priceTier: 3, tags: ["herencia / sucesión", "testamento en españa", "residente fiscal"], desc: "Especialistas en sucesiones transfronterizas y planificación patrimonial de alto valor." },
+  { name: "Ibarra Cruz International", city: "Madrid", focus: ["familia"], promoted: false, since: 2017, size: "9 socios", priceTier: 2, tags: ["divorcio internacional", "custodia transfronteriza"], desc: "Rama internacional del despacho, centrada en divorcios y custodias transfronterizas." },
+  { name: "Biscay Corporate Legal", city: "Bilbao", focus: ["empresas"], promoted: false, since: 2008, size: "16 socios", priceTier: 2, tags: ["constituir sociedad", "asesoría mercantil continuada"], desc: "Mercantil y fiscal societario para inversores extranjeros que aterrizan en el País Vasco." },
+  { name: "Atlántico Nómada Legal", city: "Madrid", focus: ["inmigracion"], promoted: true, since: 2016, size: "12 socios", priceTier: 2, tags: ["nómada digital", "visado de trabajo"], desc: "Boutique de inmigración enfocada en nómadas digitales, Golden Visa y movilidad ejecutiva." },
+  { name: "Norte Privado Abogados", city: "Bilbao", focus: ["propiedad", "familia", "inmigracion"], promoted: true, since: 1987, size: "55 socios", priceTier: 3, tags: ["comprar", "herencia / sucesión", "testamento en españa", "residencia no lucrativa", "reagrupación familiar"], desc: "Despacho multidisciplinar de banca privada legal con presencia en Bilbao, Madrid y Ginebra." },
+  { name: "Norte Privado Bilbao", city: "Bilbao", focus: ["propiedad", "inmigracion"], promoted: true, since: 2015, size: "11 socios", priceTier: 1, tags: ["alquilar", "ya soy propietario", "residencia no lucrativa"], desc: "Oficina local del grupo Norte Privado, con tarifas más accesibles para casos de menor volumen." },
+  { name: "Deusto Global Partners", city: "Bilbao", focus: ["inmigracion", "empresas"], promoted: false, since: 2011, size: "18 socios", priceTier: 1, tags: ["visado de trabajo", "constituir sociedad", "darme de alta como autónomo/a"], desc: "Puente legal entre startups internacionales y el ecosistema empresarial vasco." },
+
+  // Más bufetes en las especialidades originales
+  { name: "Altamira Global Mobility", city: "Bilbao", focus: ["inmigracion", "laboral"], promoted: false, since: 2012, size: "10 socios", priceTier: 2, tags: ["visado de trabajo", "reagrupación familiar", "expatriación de trabajadores"], desc: "Movilidad internacional para profesionales y empresas que trasladan talento a Euskadi." },
+  { name: "Castellana Movilidad", city: "Madrid", focus: ["inmigracion", "fiscal"], promoted: false, since: 2009, size: "15 socios", priceTier: 3, tags: ["residencia no lucrativa", "nómada digital", "residencia fiscal internacional"], desc: "Residencias de alto perfil con planificación fiscal integrada desde el primer día." },
+  { name: "Lizarraga Familia Abogados", city: "Bilbao", focus: ["familia", "litigacion"], promoted: false, since: 2001, size: "8 socios", priceTier: 2, tags: ["divorcio internacional", "custodia transfronteriza", "mediación"], desc: "Derecho de familia con enfoque en acuerdos y mediación antes de llegar a juicio." },
+  { name: "Moyúa Partners", city: "Bilbao", focus: ["propiedad", "empresas"], promoted: false, since: 2015, size: "9 socios", priceTier: 2, tags: ["alquilar", "vender", "asesoría mercantil continuada"], desc: "Boutique de locales comerciales y contratos de arrendamiento para negocios." },
+
+  // Fiscal & Tributario
+  { name: "Etxeberria Fiscal", city: "Bilbao", focus: ["fiscal", "empresas"], promoted: true, since: 2006, size: "12 socios", priceTier: 2, tags: ["declaración de la renta", "inspección o requerimiento", "impuestos de mi empresa"], desc: "Fiscalidad foral de Bizkaia para particulares, autónomos y pymes, con trato muy directo." },
+  { name: "Velázquez Tax Advisors", city: "Madrid", focus: ["fiscal", "patrimonio"], promoted: false, since: 2004, size: "24 socios", priceTier: 3, tags: ["residencia fiscal internacional", "inspección o requerimiento", "protección del patrimonio"], desc: "Residencia fiscal, doble imposición y régimen de impatriados para ejecutivos internacionales." },
+  { name: "Indautxu Asesores Tributarios", city: "Bilbao", focus: ["fiscal"], promoted: false, since: 2014, size: "5 socios", priceTier: 1, tags: ["declaración de la renta", "inspección o requerimiento"], desc: "Declaraciones, requerimientos y recursos ante Hacienda Foral a precio cerrado." },
+
+  // Patrimonio & Wealth Planning
+  { name: "Albia Patrimonios", city: "Bilbao", focus: ["patrimonio", "familia"], promoted: false, since: 2000, size: "20 socios", priceTier: 3, tags: ["family office", "relevo generacional", "herencia / sucesión"], desc: "Family office jurídico para familias empresarias del País Vasco." },
+  { name: "Ortega & Bilbao Wealth Law", city: "Madrid", focus: ["patrimonio", "fiscal"], promoted: false, since: 2012, size: "17 socios", priceTier: 3, tags: ["inversión inmobiliaria o financiera", "protección del patrimonio", "residencia fiscal internacional"], desc: "Planificación patrimonial internacional y estructuras de inversión." },
+  { name: "Gorbea Relevo Familiar", city: "Bilbao", focus: ["patrimonio", "empresas"], promoted: false, since: 2017, size: "6 socios", priceTier: 2, tags: ["relevo generacional", "family office", "asesoría mercantil continuada"], desc: "Protocolos familiares y relevo generacional en empresas vascas." },
+
+  // Laboral & Empleo
+  { name: "Abando Laboral", city: "Bilbao", focus: ["laboral"], promoted: true, since: 2009, size: "7 socios", priceTier: 1, tags: ["despido", "acoso o conflicto laboral"], desc: "Defensa de trabajadores en despidos, acoso y reclamaciones salariales." },
+  { name: "Txurdinaga & Asociados", city: "Bilbao", focus: ["laboral", "empresas"], promoted: false, since: 2002, size: "19 socios", priceTier: 2, tags: ["contrato de alta dirección", "despido", "asesoría mercantil continuada"], desc: "Laboral de empresa: reestructuraciones, alta dirección y negociación colectiva." },
+  { name: "Chamberí Employment Law", city: "Madrid", focus: ["laboral"], promoted: false, since: 2011, size: "14 socios", priceTier: 3, tags: ["contrato de alta dirección", "expatriación de trabajadores"], desc: "Contratos de directivos, blindajes y salidas negociadas de alta dirección." },
+
+  // Penal Económico & Compliance
+  { name: "Lexer Compliance", city: "Bilbao", focus: ["penal", "tecnologia"], promoted: false, since: 2018, size: "8 socios", priceTier: 2, tags: ["programa de compliance", "protección de datos (rgpd)"], desc: "Programas de compliance penal y protección de datos para empresas medianas." },
+  { name: "Zabalburu Penal", city: "Bilbao", focus: ["penal", "litigacion"], promoted: false, since: 1996, size: "11 socios", priceTier: 3, tags: ["estafa o fraude", "delito societario", "recurso contra una sentencia"], desc: "Penal económico: estafas, administración desleal y defensa de directivos." },
+  { name: "Recoletos Defensa Penal", city: "Madrid", focus: ["penal"], promoted: false, since: 2005, size: "16 socios", priceTier: 3, tags: ["delito fiscal o blanqueo", "estafa o fraude", "delito societario"], desc: "Delito fiscal y blanqueo en procedimientos de alta complejidad." },
+
+  // Tecnología, Propiedad Intelectual & Datos
+  { name: "Zorrozaurre Tech Law", city: "Bilbao", focus: ["tecnologia", "empresas"], promoted: false, since: 2020, size: "6 socios", priceTier: 2, tags: ["contratos tecnológicos", "protección de datos (rgpd)", "constituir sociedad"], desc: "Derecho tecnológico para startups: SaaS, licencias y protección de datos." },
+  { name: "Marca Norte Propiedad Industrial", city: "Bilbao", focus: ["tecnologia"], promoted: false, since: 2010, size: "9 socios", priceTier: 1, tags: ["registro de marca", "patente o derechos de autor"], desc: "Registro y defensa de marcas y patentes en España y la Unión Europea." },
+  { name: "Prado Digital Rights", city: "Madrid", focus: ["tecnologia", "litigacion"], promoted: false, since: 2013, size: "13 socios", priceTier: 3, tags: ["patente o derechos de autor", "protección de datos (rgpd)", "reclamación de deuda o impago"], desc: "Litigios de propiedad intelectual y sanciones de protección de datos." },
+
+  // Litigación & Arbitraje
+  { name: "Cantábrico Litigación", city: "Bilbao", focus: ["litigacion", "empresas"], promoted: false, since: 1997, size: "21 socios", priceTier: 3, tags: ["reclamación de deuda o impago", "recurso contra una sentencia", "asesoría mercantil continuada"], desc: "Litigación civil y mercantil de alto valor ante los tribunales vascos." },
+  { name: "Castellana Arbitraje", city: "Madrid", focus: ["litigacion"], promoted: false, since: 2003, size: "18 socios", priceTier: 3, tags: ["arbitraje comercial", "mediación"], desc: "Arbitraje comercial nacional e internacional." },
+  { name: "Atxuri Mediación & Litigio", city: "Bilbao", focus: ["litigacion", "familia"], promoted: false, since: 2015, size: "4 socios", priceTier: 1, tags: ["mediación", "reclamación de deuda o impago", "herencia / sucesión"], desc: "Resolver antes de pleitear: mediación en conflictos civiles y familiares." },
+];
+
+const ARTICLES = [
+  { tag: "Golden Visa", sponsor: null, title: "El Golden Visa inmobiliario llega a su fin: qué cambia para los inversores ya residentes", excerpt: "El Gobierno confirma el calendario de extinción del programa y detalla el régimen transitorio para quienes ya obtuvieron su visado por inversión." },
+  { tag: "Fiscalidad", sponsor: "Vanguardia & Asociados", title: "Cinco claves fiscales antes de comprar una vivienda de lujo en Bizkaia", excerpt: "Un análisis sobre el Impuesto de Transmisiones Patrimoniales foral y las exenciones aplicables a no residentes." },
+  { tag: "Movilidad", sponsor: null, title: "Nómadas digitales: la demanda del visado crece un 34% en el último año", excerpt: "El colectivo se concentra cada vez más en ciudades secundarias como Bilbao, atraído por su calidad de vida y conectividad." },
+  { tag: "Sucesiones", sponsor: "Ibarra & Cruz Wealth", title: "Herencias transfronterizas: cómo evitar la doble tributación entre España y EE. UU.", excerpt: "Los convenios bilaterales y el Reglamento europeo de sucesiones marcan la estrategia de planificación patrimonial." },
+  { tag: "Laboral", sponsor: "Abando Laboral", title: "Me han despedido: qué revisar en la carta antes de firmar nada", excerpt: "Fecha de efectos, causa alegada y cálculo de la indemnización: los tres puntos que conviene comprobar con un abogado." },
+  { tag: "Propiedad intelectual", sponsor: null, title: "Registrar tu marca antes de lanzar tu negocio: qué protege y qué no", excerpt: "Diferencias entre una marca española y una de la Unión Europea, y cuándo compensa cada una." },
+];
+
+/* ---------------------------------- FUZZY SEARCH ---------------------------------- */
+function levenshtein(a, b) {
+  const m = a.length, n = b.length;
+  if (!m) return n; if (!n) return m;
+  const d = Array.from({ length: m + 1 }, (_, i) => [i, ...Array(n).fill(0)]);
+  for (let j = 0; j <= n; j++) d[0][j] = j;
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      d[i][j] = a[i - 1] === b[j - 1] ? d[i - 1][j - 1] : 1 + Math.min(d[i - 1][j], d[i][j - 1], d[i - 1][j - 1]);
+    }
+  }
+  return d[m][n];
+}
+
+function fuzzyScore(query, target) {
+  const q = query.toLowerCase().trim();
+  const t = target.toLowerCase();
+  if (!q) return 0;
+  if (t === q) return 100;
+  if (t.startsWith(q)) return 92;
+  if (t.includes(q)) return 80;
+  const words = t.split(/[\s&]+/).filter(Boolean);
+  if (words.some(w => w.startsWith(q))) return 70;
+  const dist = Math.min(...words.map(w => levenshtein(q, w)));
+  const ratio = 1 - dist / Math.max(q.length, 4);
+  return Math.max(0, Math.round(ratio * 55));
+}
+
+// Búsqueda combinada: por nombre de bufete (difusa) o por caso/problema descrito (por especialidad)
+function caseScore(query, firm) {
+  const m = query.toLowerCase();
+  let score = 0;
+  Object.entries(TOPIC_SIGNALS).forEach(([catId, t]) => {
+    const hits = t.words.reduce((s, w) => s + (m.includes(w) ? 1 : 0), 0);
+    if (hits > 0 && firm.focus.includes(catId)) score += hits * 18;
+  });
+  const descWords = firm.desc.toLowerCase();
+  query.toLowerCase().split(/\s+/).filter(w => w.length > 3).forEach(w => { if (descWords.includes(w)) score += 4; });
+  return score;
+}
+
+function combinedScore(query, firm) {
+  return Math.max(fuzzyScore(query, firm.name), caseScore(query, firm));
+}
+
+function searchFirmsFn(query) {
+  if (!query.trim()) return { results: [], alsoInterested: [] };
+  const scored = FIRMS.map(f => ({ f, score: combinedScore(query, f) })).filter(r => r.score > 12);
+  const results = scored
+    .sort((a, b) => (b.f.promoted - a.f.promoted) || (b.score - a.score))
+    .slice(0, 6)
+    .map(r => r.f);
+  let alsoInterested = [];
+  if (results.length > 0) {
+    const anchor = results[0];
+    const shownNames = new Set(results.map(f => f.name));
+    alsoInterested = FIRMS
+      .filter(f => !shownNames.has(f.name) && f.focus.some(cat => anchor.focus.includes(cat)))
+      .map(f => ({ f, score: (f.promoted ? 30 : 0) + (4 - f.priceTier) * 10 + (f.since < 2005 ? 8 : 0) }))
+      .sort((a, b) => (b.f.promoted - a.f.promoted) || (b.score - a.score))
+      .slice(0, 3)
+      .map(r => r.f);
+  }
+  return { results, alsoInterested };
+}
+
+function relatedCategoriesForQuery(query) {
+  const m = query.toLowerCase();
+  return Object.entries(TOPIC_SIGNALS)
+    .map(([id, t]) => ({ id, hits: t.words.reduce((s, w) => s + (m.includes(w) ? 1 : 0), 0) }))
+    .filter(r => r.hits > 0)
+    .sort((a, b) => b.hits - a.hits)
+    .map(r => CATEGORIES.find(c => c.id === r.id))
+    .filter(Boolean);
+}
+
+
+/* ---------------------------------- MONOGRAMA SOBRE TEJIDO (imagen distintiva de cada bufete) ---------------------------------- */
+function hashStr(s) { let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0; return h; }
+// [tono de la lana, color del monograma]
+const TONES = [
+  ["#D9CFC0", "#16223A"], ["#B9A27F", "#FBF7F1"], ["#8F8A80", "#FBF7F1"], ["#E4DCCF", "#16223A"],
+  ["#1E2B47", "#E2C27A"], ["#C5BCAD", "#16223A"], ["#6F6658", "#F3ECE2"], ["#A89676", "#FBF7F1"],
+];
+const BRAND_TONE = ["#182544", "#D1A54A"];
+const CAT_TONES = ["#C2AE90", "#8F8A80", "#DDD4C6", "#1E2B47", "#AE9878", "#CFC7B9", "#716857", "#B6AC9C", "#E4DCCF", "#8C7860"];
+
+/* Logo de Lexa LG: L blanca y lupa dorada sobre azul marino */
+function Logo({ size = 32, plain = false }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 100 100" className="shrink-0" aria-hidden="true">
+      {!plain && <rect width="100" height="100" rx="23" fill="#182544" />}
+      <path d="M31 21V68.5H64" fill="none" stroke={plain ? "currentColor" : "#FFFFFF"} strokeWidth="6.5" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="66" cy="34" r="9.5" fill="none" stroke="#D1A54A" strokeWidth="4.4" />
+      <path d="M73 41L81.5 49.5" stroke="#D1A54A" strokeWidth="4.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+function toneFor(name) { return name === "Lexa LG" ? BRAND_TONE : TONES[hashStr(name) % TONES.length]; }
+function initialsOf(name) {
+  return name.split(/\s+/).filter(w => w.length > 1 || /[A-ZÁÉÍÓÚÑ]/.test(w)).slice(0, 2).map(w => w[0]).join("").toUpperCase();
+}
+function FirmCrest({ name, size = 56 }) {
+  if (name === "Lexa LG") return <Logo size={size} />;
+  const [tone, fg] = toneFor(name);
+  return (
+    <div className="weave shrink-0 flex items-center justify-center" style={{ "--tone": tone, width: size, height: size, color: fg }} aria-hidden="true">
+      <span className="f-display" style={{ fontSize: Math.round(size * 0.4), letterSpacing: ".04em", lineHeight: 1 }}>{initialsOf(name)}</span>
+    </div>
+  );
+}
+
+function Fee({ tier }) {
+  return (
+    <span aria-label={`Honorarios nivel ${tier} de 3`}>
+      {"€".repeat(tier)}<span style={{ opacity: .28 }}>{"€".repeat(3 - tier)}</span>
+    </span>
+  );
+}
+
+function SectionHead({ eyebrow, title, children, center = true }) {
+  return (
+    <div className={`flex flex-col gap-5 mb-10 md:mb-14 ${center ? "items-center text-center" : "items-start"}`}>
+      <div className="eyebrow">{eyebrow}</div>
+      <h2 className="h-section max-w-3xl">{title}</h2>
+      {children}
+    </div>
+  );
+}
+
+/* ---------------------------------- HERO (campaña a sangre) ---------------------------------- */
+function Hero({ onExplore, onNews }) {
+  return (
+    <section className="weave relative overflow-hidden" style={{ "--tone": "var(--hero-tone)", color: "var(--ink)" }}>
+      {/* La lupa del logo, en grande y casi invisible */}
+      <svg className="absolute pointer-events-none" style={{ right: "-14%", top: "-10%", width: "min(620px, 110vw)", opacity: .5 }} viewBox="0 0 100 100" aria-hidden="true">
+        <circle cx="46" cy="46" r="30" fill="none" stroke="#D1A54A" strokeWidth=".5" />
+        <circle cx="46" cy="46" r="26" fill="none" stroke="#D1A54A" strokeWidth=".25" />
+        <path d="M68 68L90 90" stroke="#D1A54A" strokeWidth=".6" strokeLinecap="round" />
+      </svg>
+      <div className="gutter relative max-w-7xl mx-auto flex flex-col items-center justify-end text-center pb-14 md:pb-20 pt-32"
+        style={{ minHeight: "clamp(500px, 74vh, 720px)" }}>
+        <Logo size={56} />
+        <div className="eyebrow mt-7">Bilbao · Madrid · Desde 2004</div>
+        <h1 className="f-display mt-5 leading-[0.98]" style={{ fontSize: "clamp(2.9rem, 7.4vw, 6rem)", fontWeight: 300 }}>
+          El bufete correcto,<br /><em className="italic" style={{ color: "var(--accent)" }}>para el caso correcto.</em>
+        </h1>
+        <p className="mt-6 text-[15px] leading-relaxed max-w-[30rem] muted">
+          Lexa LG conecta patrimonios y familias internacionales con los despachos de mayor prestigio en España, en diez especialidades.
+        </p>
+        <div className="mt-9 flex flex-wrap justify-center gap-3">
+          <button onClick={onExplore} className="btn btn-primary">Descubrir especialidades</button>
+          <button onClick={onNews} className="btn btn-outline">Actualidad</button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Promises() {
+  const items = [
+    ["lock", "Consulta confidencial", "Tus datos solo llegan al despacho que elijas."],
+    ["scale", `${FIRMS.length} despachos seleccionados`, "En Bilbao y Madrid, en diez especialidades."],
+    ["check", "Sin coste para ti", "El comparador es gratuito para el cliente."],
+  ];
+  return (
+    <section className="gutter py-10" style={{ borderBottom: "1px solid var(--line)" }}>
+      <div className="max-w-6xl mx-auto grid sm:grid-cols-3 gap-8">
+        {items.map(([icon, t, d]) => (
+          <div key={t} className="flex flex-col items-center text-center gap-2.5">
+            <Icon name={icon} size={20} />
+            <div className="label">{t}</div>
+            <p className="text-[13.5px] muted max-w-[16rem]">{d}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ---------------------------------- ESPECIALIDADES (portada, en carrusel) ---------------------------------- */
+function CategoryTile({ c, i, onPick }) {
+  const n = FIRMS.filter(f => f.focus.includes(c.id)).length;
+  const dark = [1, 3, 4, 6, 9].includes(i);
+  return (
+    <button onClick={() => onPick(c.id)} className="group text-left flex flex-col gap-3.5 min-w-0">
+      <div className="relative w-full aspect-[3/4] overflow-hidden">
+        <div className="weave zoom absolute inset-0 flex items-center justify-center" style={{ "--tone": CAT_TONES[i % CAT_TONES.length], color: dark ? "#FBF7F1" : "#2A231D" }}>
+          <Icon name={c.icon} size={34} className="opacity-80" />
+        </div>
+      </div>
+      <div>
+        <div className="label leading-relaxed">{c.label}</div>
+        <div className="text-[12.5px] muted mt-1">{n} despachos</div>
+      </div>
+    </button>
+  );
+}
+
+function HomeCategories({ onPick, onExplore }) {
+  return (
+    <section className="gutter py-20 md:py-28">
+      <div className="max-w-7xl mx-auto">
+        <SectionHead eyebrow="Especialidades" title="Cada caso tiene su despacho">
+          <button onClick={onExplore} className="link-u">Ver todas</button>
+        </SectionHead>
+        <div className="snap-row scrollbar-none">
+          {CATEGORIES.map((c, i) => <CategoryTile key={c.id} c={c} i={i} onPick={onPick} />)}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------------------------------- OFERTAS DE BUFETES (portada) ---------------------------------- */
+function OfertasBufetes({ favorites, toggleFav, onContact }) {
+  const ofertas = useMemo(() => FIRMS.filter(f => f.promoted).sort((a, b) => (b.priceTier - a.priceTier) || (a.name > b.name ? 1 : -1)), []);
+  return (
+    <section id="ofertas" className="gutter py-20 md:py-28" style={{ background: "var(--surface-2)" }}>
+      <div className="max-w-7xl mx-auto">
+        <SectionHead eyebrow="Selección de la semana" title="Despachos recomendados" />
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-3 md:gap-x-6 gap-y-12">
+          {ofertas.map(f => (
+            <FirmCard key={f.name} firm={f} isFav={favorites.includes(f.name)} onToggleFav={toggleFav} onContact={() => onContact(f)} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------------------------------- DATOS Y CONDICIONES ---------------------------------- */
+function TermsGate({ onAccept }) {
+  const [checked, setChecked] = useState(false);
+  const clauses = [
+    ["Primera", "Tratamiento de datos (RGPD)", "Para recomendarte los bufetes más adecuados, Lexa LG trata los datos que nos facilitas durante la navegación (especialidad buscada, urgencia y, si contactas con un despacho, tus datos de contacto). Estos datos solo se comparten con los despachos que decidas contactar expresamente."],
+    ["Segunda", "Naturaleza del servicio", "Lexa LG es una plataforma de intermediación: no presta servicios legales directamente. Los despachos mostrados son responsables de la asesoría que ofrezcan. Algunos resultados corresponden a firmas colaboradoras que patrocinan su posición, señaladas como \"Firma recomendada\" o \"Anuncio\"."],
+    ["Tercera", "Condiciones de uso", "El uso del comparador es gratuito para el usuario. Al continuar, confirmas que eres mayor de edad y que la información que proporciones es veraz, a los efectos de recibir una recomendación adecuada."],
+  ];
+  return (
+    <div className="gutter py-12 md:py-20">
+      <div className="max-w-2xl mx-auto">
+        <SectionHead eyebrow="Antes de continuar" title="Datos y condiciones" />
+        <div className="space-y-9">
+          {clauses.map(([n, t, body]) => (
+            <div key={n} className="pt-7" style={{ borderTop: "1px solid var(--line)" }}>
+              <div className="eyebrow mb-3" style={{ color: "var(--accent)" }}>{n}</div>
+              <h2 className="f-display text-[1.6rem] leading-tight mb-3">{t}</h2>
+              <p className="text-[15px] leading-relaxed muted">{body}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-12 pt-8 flex flex-col items-center gap-7 text-center" style={{ borderTop: "1px solid var(--line)" }}>
+          <label htmlFor="terms-accept" className="flex items-start gap-3 cursor-pointer max-w-md text-left">
+            <input id="terms-accept" type="checkbox" checked={checked} onChange={e => setChecked(e.target.checked)} className="mt-1 w-4 h-4 shrink-0" style={{ accentColor: "var(--ink)" }} />
+            <span className="text-[14px] muted">He leído y acepto el tratamiento de mis datos y las condiciones de uso de Lexa LG.</span>
+          </label>
+          <button onClick={() => checked && onAccept()} disabled={!checked} className="btn btn-primary w-full sm:w-auto">
+            Aceptar y ver especialidades
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------------- CATEGORÍAS: acceso directo ---------------------------------- */
+function CategoryGrid({ onPick }) {
+  return (
+    <section id="categorias" className="gutter py-12 md:py-16">
+      <div className="max-w-7xl mx-auto">
+        <SectionHead eyebrow="Especialidades" title="Elige tu tipo de caso" />
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-3 md:gap-x-5 gap-y-10">
+          {CATEGORIES.map((c, i) => <CategoryTile key={c.id} c={c} i={i} onPick={onPick} />)}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------------------------------- REFINAR EN 2 PREGUNTAS (auto-avance) ---------------------------------- */
+function QuickRefine({ categoryId, onComplete, onCancel }) {
+  const [step, setStep] = useState(0);
+  const [answers, setAnswers] = useState({});
+  const q1 = QUESTIONS.find(q => q.cat === categoryId && q.type === "select");
+  const steps = [
+    { key: "q1", text: q1.text, options: q1.options },
+    { key: "q2", text: "¿Qué urgencia tiene tu caso?", options: ["Inmediata (< 1 mes)", "Próximos meses", "Sin prisa, explorando opciones"] },
+  ];
+  const current = steps[step];
+
+  const choose = (opt) => {
+    const next = { ...answers, [current.key]: opt };
+    setAnswers(next);
+    if (step < steps.length - 1) setStep(step + 1);
+    else onComplete(next);
+  };
+  const back = () => { if (step > 0) setStep(step - 1); else onCancel(); };
+
+  return (
+    <div className="deed p-6 md:p-10 mb-12">
+      <div className="flex items-center justify-between gap-4 mb-6">
+        <div className="eyebrow">Afinar resultado · <span className="f-mono">{step + 1} / {steps.length}</span></div>
+        <button onClick={onCancel} className="muted hover:opacity-70" aria-label="Cerrar"><Icon name="x" size={16} /></button>
+      </div>
+      <div className="grid grid-cols-2 gap-1 mb-8">
+        {steps.map((s, i) => <div key={s.key} className="h-px" style={{ background: i <= step ? "var(--ink)" : "var(--line)" }} />)}
+      </div>
+      <h3 className="f-display text-[1.9rem] leading-tight mb-7">{current.text}</h3>
+      <div className="grid sm:grid-cols-2 gap-2.5 mb-7">
+        {current.options.map(opt => (
+          <button key={opt} onClick={() => choose(opt)}
+            className="text-left px-5 py-4 border text-[14.5px] flex items-center justify-between gap-3 transition-colors hover:bg-[var(--surface-2)]"
+            style={{ borderColor: "var(--line)" }}>
+            {opt} <Icon name="chevronR" size={14} className="muted shrink-0" />
+          </button>
+        ))}
+      </div>
+      <button onClick={back} className="link"><Icon name="chevronL" size={13} /> Atrás</button>
+    </div>
+  );
+}
+
+/* ---------------------------------- RESULTADOS POR CATEGORÍA ---------------------------------- */
+function CategoryResults({ categoryId, favorites, toggleFav, onBack, onContact }) {
+  const [refining, setRefining] = useState(false);
+  const [refineAnswers, setRefineAnswers] = useState(null);
+  const cat = CATEGORIES.find(c => c.id === categoryId);
+  const pool = useMemo(() => FIRMS.filter(f => f.focus.includes(categoryId)), [categoryId]);
+  const matches = useMemo(() => computeMatches(categoryId, refineAnswers, pool), [categoryId, refineAnswers, pool]);
+
+  useEffect(() => { setRefining(false); setRefineAnswers(null); }, [categoryId]);
+
+  return (
+    <section id="resultados" className="gutter py-10 md:py-14">
+      <div className="max-w-7xl mx-auto">
+        <button onClick={onBack} className="link mb-10"><Icon name="chevronL" size={13} /> Todas las especialidades</button>
+        <SectionHead eyebrow={cat.label} title="Mejores bufetes para tu caso">
+          <div className="text-[13px] muted">{matches.length} despachos</div>
+          {!refining && (
+            <button onClick={() => setRefining(true)} className="btn btn-outline btn-sm">Afinar en 2 preguntas</button>
+          )}
+        </SectionHead>
+
+        {refineAnswers && !refining && (
+          <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
+            {Object.values(refineAnswers).map(a => <span key={a} className="chip">{a}</span>)}
+            <button onClick={() => setRefineAnswers(null)} className="link-u ml-2">Quitar filtros</button>
+          </div>
+        )}
+
+        {refining && (
+          <QuickRefine categoryId={categoryId}
+            onCancel={() => setRefining(false)}
+            onComplete={(ans) => { setRefineAnswers(ans); setRefining(false); }} />
+        )}
+
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-3 md:gap-x-6 gap-y-12">
+          {matches.map((firm, i) => (
+            <FirmCard key={firm.name} firm={firm} isFav={favorites.includes(firm.name)} onToggleFav={toggleFav} onContact={() => onContact(firm)} topPick={!!refineAnswers && i === 0} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------------------------------- RESULTADOS DE BÚSQUEDA (por nombre o por caso/tema) ---------------------------------- */
+function SearchResultsPage({ query, favorites, toggleFav, onContact, onPickCategory }) {
+  const { results, alsoInterested } = useMemo(() => searchFirmsFn(query), [query]);
+  const related = useMemo(() => relatedCategoriesForQuery(query), [query]);
+
+  return (
+    <section className="gutter py-10 md:py-14">
+      <div className="max-w-7xl mx-auto">
+        <SectionHead eyebrow="Resultados de búsqueda" title={<span className="break-words">«{query}»</span>} />
+
+        {related.length > 0 && (
+          <div className="mb-14 flex flex-col items-center">
+            <div className="eyebrow mb-4">Especialidades relacionadas</div>
+            <div className="flex flex-wrap justify-center gap-2.5">
+              {related.map(c => (
+                <button key={c.id} onClick={() => onPickCategory(c.id)} className="card card-hover flex items-center gap-2.5 px-4 py-2.5 text-[13px]">
+                  <Icon name={c.icon} size={15} /> {c.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {results.length === 0 ? (
+          <p className="text-[15px] muted max-w-xl mx-auto text-center">No encontramos despachos para «{query}». Prueba con otro nombre o describe tu caso con otras palabras (p. ej. «impuestos», «visado», «herencia»).</p>
+        ) : (
+          <>
+            <div className="eyebrow justify-center mb-8">Bufetes que encajan · {results.length}</div>
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-3 md:gap-x-6 gap-y-12 mb-20">
+              {results.map(firm => (
+                <FirmCard key={firm.name} firm={firm} isFav={favorites.includes(firm.name)} onToggleFav={toggleFav} onContact={() => onContact(firm)} />
+              ))}
+            </div>
+          </>
+        )}
+
+        {alsoInterested.length > 0 && (
+          <div className="pt-12" style={{ borderTop: "1px solid var(--line)" }}>
+            <div className="eyebrow justify-center mb-8">También te puede interesar</div>
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-3 md:gap-x-6 gap-y-12">
+              {alsoInterested.map(firm => (
+                <FirmCard key={firm.name} firm={firm} isFav={favorites.includes(firm.name)} onToggleFav={toggleFav} onContact={() => onContact(firm)} />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+/* ---------------------------------- ALTA DE BUFETES / ABOGADOS INDEPENDIENTES ---------------------------------- */
+function SentState({ title, children, onClose }) {
+  return (
+    <div className="text-center py-6">
+      <div className="mx-auto mb-6 w-fit"><FirmCrest name="Lexa LG" size={64} /></div>
+      <h3 className="f-display text-[1.9rem] mb-3">{title}</h3>
+      <p className="text-[14px] muted mb-8 max-w-xs mx-auto">{children}</p>
+      {onClose && <button onClick={onClose} className="btn btn-outline">Cerrar</button>}
+    </div>
+  );
+}
+
+function ModalHead({ title, sub, eyebrow }) {
+  return (
+    <div className="text-center mb-8">
+      {eyebrow && <div className="eyebrow justify-center mb-3">{eyebrow}</div>}
+      <h3 className="f-display text-[1.9rem] leading-tight">{title}</h3>
+      {sub && <p className="text-[13.5px] muted mt-2 max-w-xs mx-auto">{sub}</p>}
+    </div>
+  );
+}
+
+function JoinFirmModal({ onClose }) {
+  const [firmName, setFirmName] = useState("");
+  const [email, setEmail] = useState("");
+  const [specialty, setSpecialty] = useState(CATEGORIES[0].id);
+  const [message, setMessage] = useState("");
+  const [sent, setSent] = useState(false);
+
+  const canSend = firmName.trim() && email.trim();
+  const submit = (e) => { e.preventDefault(); if (canSend) setSent(true); };
+
+  return (
+    <div className="modal-wrap">
+      <div className="modal max-w-md scrollbar-none">
+        <button type="button" onClick={onClose} className="absolute top-5 right-5 muted hover:opacity-70" aria-label="Cerrar"><Icon name="x" size={18} /></button>
+        {sent ? (
+          <SentState title="Solicitud recibida" onClose={onClose}>Nuestro equipo revisará tu perfil y te contactará para evaluar tu incorporación a Lexa LG.</SentState>
+        ) : (
+          <form onSubmit={submit}>
+            <ModalHead eyebrow="Para despachos" title="Únete a Lexa LG" sub="Para bufetes y abogados/as independientes que quieran aparecer en Lexa LG." />
+            <div className="space-y-6">
+              <div>
+                <label htmlFor="join-name" className="field-label">Nombre del despacho o abogado/a</label>
+                <input id="join-name" value={firmName} onChange={e => setFirmName(e.target.value)} className="field" />
+              </div>
+              <div>
+                <label htmlFor="join-email" className="field-label">Correo electrónico de contacto</label>
+                <input id="join-email" value={email} onChange={e => setEmail(e.target.value)} type="email" className="field" />
+              </div>
+              <div>
+                <label htmlFor="join-spec" className="field-label">Especialidad principal</label>
+                <select id="join-spec" value={specialty} onChange={e => setSpecialty(e.target.value)} className="field">
+                  {CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
+                </select>
+              </div>
+              <div>
+                <label htmlFor="join-msg" className="field-label mb-2">Cuéntanos sobre tu despacho (opcional)</label>
+                <textarea id="join-msg" rows={3} value={message} onChange={e => setMessage(e.target.value)} className="field" />
+              </div>
+            </div>
+            <button type="submit" disabled={!canSend} className="btn btn-primary w-full mt-9">Enviar solicitud</button>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function JoinFirmsSection({ onOpen }) {
+  return (
+    <section className="grid md:grid-cols-2">
+      <div className="weave min-h-[320px] md:min-h-[520px] flex items-center justify-center" style={{ "--tone": "#182544", color: "#E9E3D8" }}>
+        <div className="flex flex-col items-center text-center px-8">
+          <Logo size={120} plain />
+          <div className="f-display text-[1.6rem] tracking-[0.32em] pl-[0.32em] mt-4">LEXA LG</div>
+          <div className="label mt-3" style={{ color: "#D1A54A", fontSize: 10 }}>Red de despachos</div>
+        </div>
+      </div>
+      <div className="gutter flex items-center py-16 md:py-0">
+        <div className="max-w-md mx-auto md:mx-0 md:ml-16 text-center md:text-left">
+          <div className="eyebrow justify-center md:justify-start mb-5">Para despachos y abogados independientes</div>
+          <h2 className="h-section">¿Eres un bufete o abogado/a independiente?</h2>
+          <p className="mt-5 text-[15px] leading-relaxed muted">Únete a Lexa LG y conecta con clientes internacionales que buscan exactamente tu especialidad.</p>
+          <button onClick={onOpen} className="btn btn-primary mt-9">Quiero unirme</button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------------------------------- CONSENT MODAL ---------------------------------- */
+function ConsentModal({ onAccept, onClose }) {
+  const [checked, setChecked] = useState(false);
+  const [showPolicy, setShowPolicy] = useState(false);
+
+  return (
+    <div className="modal-wrap">
+      <div className="modal max-w-md scrollbar-none">
+        <button type="button" onClick={onClose} className="absolute top-5 right-5 muted hover:opacity-70" aria-label="Cerrar"><Icon name="x" size={18} /></button>
+        <ModalHead eyebrow={<><Icon name="lock" size={12} /> RGPD</>} title={showPolicy ? "Política de privacidad" : "Confidencialidad y datos"} />
+
+        {showPolicy ? (
+          <>
+            <div className="text-[14px] muted leading-relaxed space-y-4 mb-7">
+              <p><strong style={{ color: "var(--ink)" }}>Responsable.</strong> Lexa LG — Legal Group actúa como intermediario y trata tus datos únicamente para elaborar tu recomendación y, si lo autorizas, ponerte en contacto con el despacho elegido.</p>
+              <p><strong style={{ color: "var(--ink)" }}>Datos que tratamos.</strong> Especialidad y respuestas del diagnóstico, y, si decides contactar con un despacho, tu nombre y correo electrónico.</p>
+              <p><strong style={{ color: "var(--ink)" }}>Finalidad.</strong> Generar una recomendación personalizada y transmitir tu consulta al despacho que elijas contactar. No usamos tus datos con fines publicitarios propios.</p>
+              <p><strong style={{ color: "var(--ink)" }}>Destinatarios.</strong> Únicamente el o los despachos que decidas contactar expresamente. Nunca compartimos tus datos con terceros no relacionados con tu consulta.</p>
+              <p><strong style={{ color: "var(--ink)" }}>Conservación.</strong> Mientras exista una relación activa con el despacho contactado, y como máximo 24 meses desde tu última interacción.</p>
+              <p><strong style={{ color: "var(--ink)" }}>Tus derechos.</strong> Puedes acceder, rectificar o eliminar tus datos, así como oponerte a su tratamiento, escribiendo a <span className="select-all">privacidad@lexalg.example</span>.</p>
+            </div>
+            <button onClick={() => setShowPolicy(false)} className="link"><Icon name="chevronL" size={13} /> Volver</button>
+          </>
+        ) : (
+          <>
+            <p className="text-[14.5px] muted leading-relaxed mb-7 text-center">
+              Antes de compartir tu diagnóstico con los despachos recomendados, confirma que aceptas el tratamiento de tus datos conforme al RGPD. Tu información se comparte únicamente con los bufetes que elijas contactar.
+            </p>
+            <label htmlFor="consent-accept" className="flex items-start gap-3 mb-9 cursor-pointer">
+              <input id="consent-accept" type="checkbox" checked={checked} onChange={e => setChecked(e.target.checked)} className="mt-1 w-4 h-4 shrink-0" style={{ accentColor: "var(--ink)" }} />
+              <span className="text-[14px] muted">
+                He leído y acepto la{" "}
+                <button type="button" onClick={(e) => { e.preventDefault(); setShowPolicy(true); }} className="underline underline-offset-4" style={{ color: "var(--ink)" }}>
+                  política de privacidad
+                </button>{" "}
+                y el tratamiento confidencial de mis datos legales.
+              </span>
+            </label>
+            <div className="flex flex-col gap-2.5">
+              <button onClick={() => checked && onAccept()} disabled={!checked} className="btn btn-primary w-full">Aceptar y continuar</button>
+              <button onClick={onClose} className="btn btn-outline w-full">Cancelar</button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------------- FORMULARIO DE CONTACTO CON EL BUFETE ---------------------------------- */
+function ContactFormModal({ firm, onClose, onSubmit }) {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [country, setCountry] = useState("");
+  const [sent, setSent] = useState(false);
+  const [prioInterest, setPrioInterest] = useState(false);
+
+  const canSend = name.trim() && email.trim();
+
+  const submit = (e) => {
+    e.preventDefault();
+    if (!canSend) return;
+    setSent(true);
+    setTimeout(() => onSubmit({ name, email, phone, country }), 1400);
+  };
+
+  return (
+    <div className="modal-wrap">
+      <div className="modal max-w-md scrollbar-none">
+        {!sent && <button type="button" onClick={onClose} className="absolute top-5 right-5 muted hover:opacity-70" aria-label="Cerrar"><Icon name="x" size={18} /></button>}
+        {sent ? (
+          <SentState title="Solicitud enviada">{firm.name} recibirá tu consulta y se pondrá en contacto contigo.</SentState>
+        ) : (
+          <form onSubmit={submit}>
+            <div className="flex flex-col items-center text-center mb-8">
+              <FirmCrest name={firm.name} size={64} />
+              <div className="eyebrow mt-5">Contactar con</div>
+              <h3 className="f-display text-[1.8rem] leading-tight mt-1">{firm.name}</h3>
+              <p className="text-[12.5px] muted mt-3 flex items-center gap-2"><Icon name="lock" size={12} /> Estos datos se comparten únicamente con este despacho.</p>
+            </div>
+
+            <div className="space-y-6">
+              <div>
+                <label htmlFor="contact-name" className="field-label">Nombre completo</label>
+                <input id="contact-name" value={name} onChange={e => setName(e.target.value)} className="field" />
+              </div>
+              <div>
+                <label htmlFor="contact-email" className="field-label">Correo electrónico</label>
+                <input id="contact-email" value={email} onChange={e => setEmail(e.target.value)} type="email" className="field" />
+              </div>
+            </div>
+
+            <div className="eyebrow mt-10 mb-1" style={{ color: "var(--accent)" }}>Opcional · agiliza el contacto</div>
+            <div className="space-y-6">
+              <div>
+                <label htmlFor="contact-phone" className="field-label">Número de teléfono móvil</label>
+                <input id="contact-phone" value={phone} onChange={e => setPhone(e.target.value)} type="tel" placeholder="Ej. +34 600 000 000" className="field" />
+              </div>
+              <div>
+                <label htmlFor="contact-country" className="field-label">País / región de residencia</label>
+                <input id="contact-country" value={country} onChange={e => setCountry(e.target.value)} placeholder="Ej. Estados Unidos" className="field" />
+              </div>
+            </div>
+
+            <div className="mt-8 p-5 flex items-center justify-between gap-3" style={{ background: "var(--surface-2)" }}>
+              <div className="min-w-0">
+                <div className="label">Reunión prioritaria en 48 h</div>
+                <div className="text-[12.5px] muted mt-1">Próximamente. ¿Te interesaría? Te avisamos cuando esté disponible.</div>
+              </div>
+              <button type="button" onClick={() => setPrioInterest(true)} disabled={prioInterest} className="link-u shrink-0 disabled:opacity-60">
+                {prioInterest ? "Apuntado" : "Me interesa"}
+              </button>
+            </div>
+
+            <button type="submit" disabled={!canSend} className="btn btn-primary w-full mt-9">Enviar solicitud</button>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------------- AUTH MODAL ---------------------------------- */
+function AuthModal({ onClose, onLogin }) {
+  const [mode, setMode] = useState("login");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const submit = (e) => { e.preventDefault(); if (email) onLogin({ name: name || email.split("@")[0], email }); };
+  return (
+    <div className="modal-wrap">
+      <form onSubmit={submit} className="modal max-w-sm">
+        <button type="button" onClick={onClose} className="absolute top-5 right-5 muted hover:opacity-70" aria-label="Cerrar"><Icon name="x" size={18} /></button>
+        <ModalHead eyebrow="Mi cuenta" title={mode === "login" ? "Acceder" : "Crear una cuenta"} sub="Guarda tus favoritos y el estado de tus consultas." />
+        <div className="space-y-6">
+          {mode === "register" && (
+            <div>
+              <label htmlFor="auth-name" className="field-label">Nombre</label>
+              <input id="auth-name" value={name} onChange={e => setName(e.target.value)} className="field" />
+            </div>
+          )}
+          <div>
+            <label htmlFor="auth-email" className="field-label">Correo electrónico</label>
+            <input id="auth-email" value={email} onChange={e => setEmail(e.target.value)} type="email" className="field" />
+          </div>
+        </div>
+        <button type="submit" className="btn btn-primary w-full mt-9">{mode === "login" ? "Entrar" : "Registrarme"}</button>
+        <div className="text-center mt-6 text-[13px] muted">
+          {mode === "login" ? (
+            <>¿Aún no tienes cuenta? <button type="button" className="underline underline-offset-4" style={{ color: "var(--ink)" }} onClick={() => setMode("register")}>Regístrate</button></>
+          ) : (
+            <>¿Ya tienes cuenta? <button type="button" className="underline underline-offset-4" style={{ color: "var(--ink)" }} onClick={() => setMode("login")}>Inicia sesión</button></>
+          )}
+        </div>
+      </form>
+    </div>
+  );
+}
+
+/* ---------------------------------- FIRM CARD (ficha tipo producto) ---------------------------------- */
+function FirmCard({ firm, isFav, onToggleFav, onContact, topPick }) {
+  const [tone, fg] = toneFor(firm.name);
+  return (
+    <article className="group flex flex-col min-w-0">
+      <div className="relative aspect-[4/5] overflow-hidden" style={topPick ? { outline: "1px solid var(--ink)", outlineOffset: 4 } : undefined}>
+        <button onClick={onContact} className="weave zoom absolute inset-0 flex flex-col items-center justify-center gap-3" style={{ "--tone": tone, color: fg }} aria-label={`Contactar con ${firm.name}`}>
+          <span className="f-display font-light" style={{ fontSize: "clamp(2.6rem, 6vw, 4rem)", lineHeight: 1, letterSpacing: ".04em" }}>{initialsOf(firm.name)}</span>
+          <span className="rule" />
+          <span className="label opacity-80" style={{ fontSize: 9.5 }}>{firm.city}</span>
+        </button>
+        <div className="absolute top-2.5 left-2.5 flex flex-col items-start gap-1.5 pointer-events-none">
+          {topPick && <span className="pill-lacre">Mejor opción</span>}
+          {firm.promoted && <span className="pill-lacre" style={{ background: "transparent", color: fg, padding: 0 }}>Recomendado</span>}
+        </div>
+        <button onClick={() => onToggleFav(firm.name)} aria-label={isFav ? "Quitar de favoritos" : "Guardar en favoritos"} aria-pressed={isFav}
+          className="absolute top-2 right-2 p-2 transition-opacity hover:opacity-70" style={{ color: fg }}>
+          <Icon name={isFav ? "starFill" : "star"} size={17} />
+        </button>
+      </div>
+
+      <div className="pt-4 flex flex-col flex-1">
+        <div className="label muted truncate" style={{ fontSize: 9.5 }}>{firm.focus.map(f => CATEGORIES.find(c => c.id === f)?.label.split(/,| &/)[0]).join(" · ")}</div>
+        <h3 className="f-display text-[1.25rem] md:text-[1.45rem] leading-snug mt-1.5">{firm.name}</h3>
+        <div className="text-[12.5px] muted mt-1 f-mono">Desde {firm.since} · {parseInt(firm.size)} socios · <Fee tier={firm.priceTier} /></div>
+        <p className="text-[13px] muted leading-relaxed mt-2.5 line-clamp-2 hidden sm:block">{firm.desc}</p>
+        <div className="mt-4">
+          <button onClick={onContact} className="link-u">Contactar</button>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+/* ---------------------------------- NEWS FEED ---------------------------------- */
+function NewsFeed() {
+  const [lead, ...rest] = ARTICLES;
+  return (
+    <section id="actualidad" className="gutter py-20 md:py-28">
+      <div className="max-w-7xl mx-auto">
+        <SectionHead eyebrow="Actualidad legal" title="Lo que está cambiando en el marco normativo" />
+        <div className="grid lg:grid-cols-[1.1fr_1fr] gap-10 lg:gap-16">
+          <article className="flex flex-col gap-6">
+            <div className="weave aspect-[16/10] flex items-end p-6" style={{ "--tone": "#A48A6E", color: "#FBF7F1" }}>
+              <span className="label">{lead.tag}</span>
+            </div>
+            <h3 className="f-display font-light text-[2rem] md:text-[2.6rem] leading-[1.06]">{lead.title}</h3>
+            <p className="text-[15px] muted leading-relaxed max-w-xl">{lead.excerpt}</p>
+          </article>
+          <div>
+            {rest.map((a, i) => (
+              <article key={i} className="py-6" style={{ borderTop: "1px solid var(--line)" }}>
+                <div className="flex items-center justify-between gap-3 mb-2.5">
+                  <span className="eyebrow" style={{ color: "var(--accent)" }}>{a.tag}</span>
+                  {a.sponsor && <span className="text-[11px] muted italic truncate">Patrocinado · {a.sponsor}</span>}
+                </div>
+                <h3 className="f-display text-[1.35rem] leading-snug">{a.title}</h3>
+                <p className="text-[13.5px] muted leading-relaxed mt-2">{a.excerpt}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------------------------------- FAVORITES PANEL ---------------------------------- */
+function FavoritesPanel({ favorites, toggleFav, onClose, user, onLogout }) {
+  const favFirms = FIRMS.filter(f => favorites.includes(f.name));
+  return (
+    <div className="fixed inset-0 z-50 flex justify-end" style={{ background: "var(--overlay)" }} onClick={onClose}>
+      <aside onClick={e => e.stopPropagation()} className="w-full max-w-md h-full overflow-y-auto scrollbar-none flex flex-col"
+        style={{ background: "var(--bg)", padding: "max(28px, env(safe-area-inset-top, 0px)) max(24px, env(safe-area-inset-right, 0px)) max(28px, env(safe-area-inset-bottom, 0px)) 24px" }}>
+        <div className="flex items-start justify-between mb-10">
+          <div>
+            <div className="eyebrow">{user ? `Hola, ${user.name}` : "Mi selección"}</div>
+            <h3 className="f-display text-[2.2rem] mt-2 font-light">Favoritos</h3>
+          </div>
+          <button onClick={onClose} className="muted hover:opacity-70" aria-label="Cerrar"><Icon name="x" /></button>
+        </div>
+        {favFirms.length === 0 ? (
+          <div className="py-10 text-center" style={{ borderTop: "1px solid var(--line)" }}>
+            <Icon name="star" size={22} className="mx-auto mb-4 muted" />
+            <p className="text-[14px] muted max-w-xs mx-auto">Aún no has guardado ningún bufete. Marca la estrella en cualquier ficha para añadirlo aquí.</p>
+          </div>
+        ) : (
+          <div>
+            {favFirms.map(f => (
+              <div key={f.name} className="py-4 flex items-center gap-4" style={{ borderTop: "1px solid var(--line)" }}>
+                <FirmCrest name={f.name} size={56} />
+                <div className="min-w-0 flex-1">
+                  <h4 className="f-display text-[1.2rem] truncate">{f.name}</h4>
+                  <div className="text-[12px] muted mt-0.5">{f.city} · desde {f.since}</div>
+                </div>
+                <button onClick={() => toggleFav(f.name)} aria-label="Quitar de favoritos"><Icon name="starFill" size={16} /></button>
+              </div>
+            ))}
+          </div>
+        )}
+        {user && (
+          <button onClick={onLogout} className="link mt-auto pt-6" style={{ borderTop: "1px solid var(--line)" }}>
+            <Icon name="logout" size={14} /> Cerrar sesión
+          </button>
+        )}
+      </aside>
+    </div>
+  );
+}
+
+/* ---------------------------------- HELPERS ---------------------------------- */
+function useLocalState(key, initial) {
+  const [val, setVal] = useState(() => {
+    try {
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : initial;
+    } catch (e) { return initial; }
+  });
+  useEffect(() => {
+    try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {}
+  }, [key, val]);
+  return [val, setVal];
+}
+
+function computeMatches(primaryCat, refineAnswers, pool) {
+  const firms = pool || FIRMS;
+  const q1 = (refineAnswers?.q1 || "").toLowerCase();
+  const q2 = refineAnswers?.q2 || "";
+  return firms.map(firm => {
+    const sizeNum = parseInt(firm.size) || 20;
+    let score = 40;
+    if (primaryCat && firm.focus.includes(primaryCat)) score += 10;
+    if (firm.promoted) score += 8;
+    if (q1 && firm.tags.some(t => t === q1 || q1.includes(t) || t.includes(q1))) score += 40;
+    if (q2.startsWith("Inmediata")) {
+      score += (sizeNum < 20 ? 16 : 0) + (firm.priceTier <= 2 ? 6 : 0);
+    } else if (q2.startsWith("Sin prisa")) {
+      score += (firm.since < 2005 ? 16 : 0) + (firm.priceTier >= 3 ? 6 : 0);
+    } else if (q2) {
+      score += 8;
+    }
+    score += (firm.since < 2000 ? 6 : firm.since < 2012 ? 3 : 0);
+    return { ...firm, match: score };
+  }).sort((a, b) => b.match - a.match);
+}
+/* ---------------------------------- CONCIERGE CHATBOT (heurística enriquecida) ---------------------------------- */
+const TOPIC_SIGNALS = {
+  propiedad: { words: ["propiedad","comprar","vender","alquilar","casa","piso","inmueble","vivienda","hipoteca","notaria","notaría","registro","due diligence","impuesto","impuestos","itp","fiscal","fiscalidad"],
+    reply: "Eso encaja con 'Propiedad & Real Estate'. Ahí revisamos con qué operación quieres empezar (compra, venta o alquiler), la fiscalidad aplicable y, si hace falta, el due diligence notarial y registral. Puedes ver los mejores bufetes al instante, o afinar con solo 2 preguntas." },
+  inmigracion: { words: ["visado","nie","inmigra","resid","mudar","nómada","nomada","brexit","reagrupación","reagrupacion","permiso"],
+    reply: "Eso entra en 'Inmigración & Movilidad Global'. Te preguntaremos el tipo de visado, tu país de origen y el plazo que manejas, para dirigirte al despacho con más experiencia en tu perfil concreto." },
+  familia: { words: ["divorcio","herencia","sucesi","familia","custodia","testamento","matrimonio","patrimonio familiar","impuesto","impuestos","fiscal","fiscalidad"],
+    reply: "Eso es 'Familia & Sucesiones'. Cubrimos divorcios internacionales, custodia transfronteriza, testamentos y herencias — te mostramos los mejores bufetes al instante, sin necesidad de responder nada más." },
+  empresas: { words: ["empresa","sociedad","autónomo","autonomo","negocio","mercantil","startup","facturar","facturación","impuesto","impuestos","fiscal","fiscalidad","societario"],
+    reply: "Eso es 'Empresas & Negocios'. Constituir sociedad, darte de alta como autónomo/a o buscar asesoría mercantil continuada — dinos cuál y te acercamos a los despachos con más experiencia en tu sector." },
+  fiscal: { words: ["impuesto","impuestos","hacienda","renta","irpf","inspección","inspeccion","requerimiento","tributar","tributo","fiscal","fiscalidad","doble imposición","doble imposicion","declaración","declaracion"],
+    reply: "Eso encaja con 'Fiscal & Tributario'. Te ayudamos con la renta, inspecciones de Hacienda (foral o estatal), residencia fiscal internacional o impuestos de tu empresa. Si estás en Bizkaia, ojo: aquí tributas ante la Hacienda Foral." },
+  patrimonio: { words: ["patrimonio","family office","inversión","inversion","invertir","holding","relevo","generacional","donación","donacion","proteger mi patrimonio","empresa familiar"],
+    reply: "Eso es 'Patrimonio & Wealth Planning'. Planificación y protección del patrimonio, family office, relevo generacional e inversión. Te mostramos los despachos que trabajan con familias y patrimonios de tu perfil." },
+  laboral: { words: ["despido","despedido","indemnización","indemnizacion","finiquito","contrato de trabajo","acoso","jefe","empleado","trabajador","alta dirección","alta direccion","expatriado","laboral"],
+    reply: "Eso es 'Laboral & Empleo'. Si se trata de un despido, actúa rápido: los plazos para reclamar son cortos. Te mostramos despachos que defienden a trabajadores y otros que asesoran a empresas." },
+  penal: { words: ["estafa","fraude","denuncia","delito","penal","compliance","blanqueo","administración desleal","administracion desleal","querella","investigado","imputado"],
+    reply: "Eso entra en 'Penal Económico & Compliance'. Estafas, delitos societarios o fiscales, y programas de compliance para empresas. Si la situación es urgente, contacta hoy mismo con uno de los despachos." },
+  tecnologia: { words: ["marca","patente","logo","derechos de autor","copyright","rgpd","protección de datos","proteccion de datos","privacidad","software","saas","tecnológica","tecnologica"],
+    reply: "Eso es 'Tecnología, Propiedad Intelectual & Datos'. Registro de marcas y patentes, protección de datos y contratos tecnológicos para startups y empresas." },
+  litigacion: { words: ["demanda","demandar","juicio","pleito","impago","deuda","me deben","reclamar","reclamación","reclamacion","arbitraje","recurso","sentencia","mediación","mediacion","tribunal"],
+    reply: "Eso es 'Litigación & Arbitraje'. Reclamaciones de deudas, arbitraje comercial, recursos y mediación. Te mostramos despachos según la cuantía y la complejidad del conflicto." },
+};
+const URGENT_WORDS = ["urgente","urgencia","cuanto antes","ya mismo","rápido","rapido","inmediato"];
+const GREETINGS = ["hola","buenas","hey","buenos días","buenos dias","buenas tardes"];
+
+function reply(msg) {
+  const m = msg.toLowerCase();
+
+  if (GREETINGS.some(g => m.includes(g)) && m.length < 40)
+    return "Buenas tardes. Cuéntame brevemente qué necesitas — por ejemplo 'quiero comprar una casa en Bilbao' o 'necesito un visado de nómada digital' — y te digo exactamente qué diagnóstico abrir.";
+
+  const scores = Object.entries(TOPIC_SIGNALS).map(([id, t]) => ({
+    id, reply: t.reply, score: t.words.reduce((s, w) => s + (m.includes(w) ? 1 : 0), 0),
+  })).sort((a, b) => b.score - a.score);
+
+  const top = scores[0];
+  const isUrgent = URGENT_WORDS.some(w => m.includes(w));
+
+  if (top.score > 0) {
+    const urgentNote = isUrgent ? " Como mencionas urgencia, márcalo también en la pregunta de plazos del diagnóstico: filtramos a los despachos con disponibilidad inmediata." : "";
+    return top.reply + urgentNote;
+  }
+
+  if (m.includes("precio") || m.includes("coste") || m.includes("honorario") || m.includes("cuánto cuesta") || m.includes("cuanto cuesta"))
+    return "Los honorarios varían según el despacho y la complejidad del caso — algunos trabajan a tarifa fija y otros por horas. Si completas el diagnóstico, cada bufete recomendado te lo detalla directamente al contactar.";
+
+  if (m.length < 12)
+    return "Cuéntame un poco más — ¿tu duda es sobre una propiedad, un visado, tu familia, tu empresa, impuestos, tu trabajo o un conflicto con alguien?";
+
+  return "Gracias por el detalle. No he identificado con seguridad la rama legal exacta — ¿se trata de propiedad, inmigración, familia, empresa, impuestos, patrimonio, trabajo, un asunto penal, tecnología o un pleito? También puedes describir tu caso directamente en el buscador de arriba.";
+}
+
+function Concierge({ onOpenWizard }) {
+  const [open, setOpen] = useState(false);
+  const [msgs, setMsgs] = useState([{ from: "bot", text: "Buenas tardes. Soy el concierge de Lexa LG — puedo ayudarte a identificar qué rama legal necesitas." }]);
+  const [input, setInput] = useState("");
+  const endRef = useRef(null);
+
+  useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" }); }, [msgs, open]);
+
+  const send = () => {
+    if (!input.trim()) return;
+    const userMsg = input.trim();
+    setMsgs(m => [...m, { from: "user", text: userMsg }]);
+    setInput("");
+    setTimeout(() => setMsgs(m => [...m, { from: "bot", text: reply(userMsg) }]), 450);
+  };
+
+  const edge = { right: "max(16px, calc(env(safe-area-inset-right, 0px) + 12px))" };
+
+  return (
+    <>
+      {open && (
+        <div className="fixed z-50 w-[calc(100vw-32px)] max-w-sm h-[480px] max-h-[72vh] flex flex-col overflow-hidden"
+          style={{ ...edge, bottom: "calc(env(safe-area-inset-bottom, 0px) + 88px)", background: "var(--bg)", border: "1px solid var(--line)", boxShadow: "var(--shadow)" }}>
+          <div className="flex items-center gap-3 px-5 py-4" style={{ borderBottom: "1px solid var(--line)" }}>
+            <FirmCrest name="Lexa LG" size={36} />
+            <div>
+              <div className="label">Concierge</div>
+              <div className="text-[11.5px] muted mt-0.5">Te orientamos hacia la especialidad adecuada</div>
+            </div>
+            <button onClick={() => setOpen(false)} className="ml-auto muted hover:opacity-70" aria-label="Cerrar"><Icon name="x" size={16} /></button>
+          </div>
+          <div className="flex-1 overflow-y-auto scrollbar-none px-5 py-5 space-y-4">
+            {msgs.map((m, i) => (
+              <div key={i} className={`max-w-[86%] text-[14px] leading-relaxed ${m.from === "bot" ? "" : "ml-auto px-4 py-3"}`}
+                style={m.from === "bot" ? { color: "var(--ink)" } : { background: "var(--surface-2)" }}>
+                {m.text}
+              </div>
+            ))}
+            <div ref={endRef} />
+          </div>
+          <div className="px-4 pt-3 pb-4 flex flex-col gap-3" style={{ borderTop: "1px solid var(--line)" }}>
+            <div className="flex items-center gap-2">
+              <input id="concierge-input" value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && send()}
+                placeholder="Describe tu consulta..." className="field flex-1 min-w-0" style={{ fontSize: 14 }} />
+              <button onClick={send} className="p-2" aria-label="Enviar"><Icon name="send2" size={17} /></button>
+            </div>
+            <button onClick={onOpenWizard} className="link-u self-start">Ver especialidades</button>
+          </div>
+        </div>
+      )}
+      <button onClick={() => setOpen(o => !o)} aria-label={open ? "Cerrar concierge" : "Abrir concierge"}
+        className="fixed z-50 h-12 px-5 flex items-center gap-2.5 transition-opacity hover:opacity-85"
+        style={{ ...edge, bottom: "calc(env(safe-area-inset-bottom, 0px) + 20px)", background: "var(--ink)", color: "var(--on-ink)", boxShadow: "var(--shadow)" }}>
+        <Icon name={open ? "x" : "bot"} size={17} />
+        <span className="label" style={{ fontSize: 10 }}>{open ? "Cerrar" : "Concierge"}</span>
+      </button>
+    </>
+  );
+}
+
+/* ---------------------------------- MENÚ LATERAL ---------------------------------- */
+function MenuDrawer({ onClose, onPick, onExplore, onNews, onOfertas, onJoin }) {
+  const go = (fn) => () => { onClose(); fn(); };
+  return (
+    <div className="fixed inset-0 z-50 flex" style={{ background: "var(--overlay)" }} onClick={onClose}>
+      <aside onClick={e => e.stopPropagation()} className="drawer w-full max-w-sm h-full overflow-y-auto scrollbar-none flex flex-col"
+        style={{ background: "var(--bg)", padding: "max(22px, env(safe-area-inset-top, 0px)) 24px max(28px, env(safe-area-inset-bottom, 0px)) max(24px, env(safe-area-inset-left, 0px))" }}>
+        <div className="flex items-center justify-between mb-10">
+          <span className="flex items-center gap-3"><Logo size={30} /><span className="f-display text-[1.25rem] tracking-[0.3em]">LEXA LG</span></span>
+          <button onClick={onClose} aria-label="Cerrar menú"><Icon name="x" size={20} /></button>
+        </div>
+        <nav className="flex flex-col">
+          {[["Especialidades", onExplore], ["Despachos recomendados", onOfertas], ["Actualidad legal", onNews], ["Únete como despacho", onJoin]].map(([l, fn]) => (
+            <button key={l} onClick={go(fn)} className="f-display text-[1.7rem] font-light text-left py-2.5 hover:opacity-60 transition-opacity">{l}</button>
+          ))}
+        </nav>
+        <div className="eyebrow mt-10 mb-4">Por especialidad</div>
+        <div className="flex flex-col">
+          {CATEGORIES.map(c => (
+            <button key={c.id} onClick={go(() => onPick(c.id))} className="text-left text-[14px] py-2.5 flex items-center justify-between gap-3 muted hover:text-[var(--ink)]" style={{ borderTop: "1px solid var(--line)" }}>
+              {c.label} <Icon name="chevronR" size={13} />
+            </button>
+          ))}
+        </div>
+      </aside>
+    </div>
+  );
+}
+
+/* ---------------------------------- NAV (logo centrado, buscador desplegable) ---------------------------------- */
+function Nav({ onLogoClick, onOpenMenu, onExplore, onNews, onOpenFav, onOpenAuth, onContact, onRequireTerms, onSearch, termsAccepted, favCount, user }) {
+  const [query, setQuery] = useState("");
+  const [searchOpen, setSearchOpen] = useState(false);
+  const inputRef = useRef(null);
+  const { results, alsoInterested } = useMemo(() => searchFirmsFn(query), [query]);
+
+  const toggleSearch = () => {
+    if (!termsAccepted) { onRequireTerms(); return; }
+    setSearchOpen(o => !o);
+  };
+  useEffect(() => { if (searchOpen) inputRef.current?.focus(); }, [searchOpen]);
+  useEffect(() => { if (!termsAccepted) setSearchOpen(false); }, [termsAccepted]);
+
+  const submitSearch = () => {
+    if (!termsAccepted) { onRequireTerms(); return; }
+    if (!query.trim()) return;
+    setSearchOpen(false);
+    onSearch(query.trim());
+  };
+  const contact = (f) => { setSearchOpen(false); onContact(f); };
+
+  return (
+    <header className="sticky z-40" style={{ top: "env(safe-area-inset-top, 0px)", background: "color-mix(in srgb, var(--bg) 94%, transparent)", backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)", borderBottom: "1px solid var(--line)" }}>
+      <div className="gutter max-w-7xl mx-auto grid grid-cols-[1fr_auto_1fr] items-center h-[60px] md:h-[76px]">
+        <div className="flex items-center gap-6">
+          <button onClick={onOpenMenu} className="flex items-center gap-2.5" aria-label="Abrir menú">
+            <Icon name="menu" size={20} />
+            <span className="label hidden md:inline" style={{ fontSize: 10 }}>Menú</span>
+          </button>
+          <nav className="hidden lg:flex items-center gap-6">
+            <button onClick={onExplore} className="label hover:opacity-60" style={{ fontSize: 10 }}>Especialidades</button>
+            <button onClick={onNews} className="label hover:opacity-60" style={{ fontSize: 10 }}>Actualidad</button>
+          </nav>
+        </div>
+
+        <button onClick={onLogoClick} className="flex items-center gap-2.5" aria-label="Lexa LG, inicio">
+          <Logo size={30} />
+          <span className="f-display text-[1.2rem] md:text-[1.5rem] tracking-[0.3em] leading-none">LEXA LG</span>
+        </button>
+
+        <div className="flex items-center justify-end gap-4 md:gap-5">
+          <button onClick={toggleSearch} aria-label="Buscar" aria-expanded={searchOpen}><Icon name={searchOpen ? "x" : "search"} size={18} /></button>
+          <button onClick={onOpenFav} className="relative" aria-label="Favoritos">
+            <Icon name="star" size={18} />
+            {favCount > 0 && <span className="absolute -top-1.5 -right-2 text-[9px] rounded-full w-4 h-4 flex items-center justify-center" style={{ background: "var(--ink)", color: "var(--on-ink)" }}>{favCount}</span>}
+          </button>
+          <button onClick={onOpenAuth} className="flex items-center gap-2" aria-label={user ? user.name : "Acceder"}>
+            <Icon name="user" size={18} />
+            <span className="label hidden md:inline" style={{ fontSize: 10 }}>{user ? user.name : "Acceder"}</span>
+          </button>
+        </div>
+      </div>
+
+      {searchOpen && (
+        <div className="gutter pb-5" style={{ borderTop: "1px solid var(--line)", background: "var(--bg)" }}>
+          <div className="max-w-3xl mx-auto pt-5">
+            <div className="flex items-center gap-3" style={{ borderBottom: "1px solid var(--ink)" }}>
+              <Icon name="search" size={16} className="muted" />
+              <input ref={inputRef} id="nav-search" value={query} onChange={e => setQuery(e.target.value)}
+                onKeyDown={e => e.key === "Enter" && submitSearch()}
+                placeholder="Bufete o tema: impuestos, visado, herencia…"
+                className="flex-1 min-w-0 bg-transparent outline-none py-3 text-[16px]" style={{ color: "var(--ink)" }} />
+              {query && <button onClick={submitSearch} className="link-u shrink-0">Buscar</button>}
+            </div>
+            {query.trim() && (
+              <div className="max-h-[58vh] overflow-y-auto scrollbar-none mt-3">
+                {results.length === 0 ? (
+                  <p className="text-[13.5px] muted py-4">Sin resultados. Prueba con otro nombre o describe tu caso.</p>
+                ) : results.map(f => (
+                  <div key={f.name} className="flex items-center gap-3.5 py-3" style={{ borderBottom: "1px solid var(--line)" }}>
+                    <FirmCrest name={f.name} size={44} />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <div className="f-display text-[1.1rem] truncate">{f.name}</div>
+                        {f.promoted && <span className="tag-promo shrink-0">Anuncio</span>}
+                      </div>
+                      <div className="text-[12px] muted">{f.city} · <Fee tier={f.priceTier} /></div>
+                    </div>
+                    <button onClick={() => contact(f)} className="link-u shrink-0">Contactar</button>
+                  </div>
+                ))}
+                {alsoInterested.length > 0 && (
+                  <div className="pt-5">
+                    <div className="eyebrow mb-2">También te puede interesar</div>
+                    {alsoInterested.map(f => (
+                      <div key={f.name} className="flex items-center gap-3 py-2">
+                        <FirmCrest name={f.name} size={30} />
+                        <div className="text-[14px] f-display truncate">{f.name}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <button onClick={submitSearch} className="btn btn-outline btn-sm w-full mt-5">Ver todos los resultados</button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </header>
+  );
+}
+
+/* ---------------------------------- APP ---------------------------------- */
+function App() {
+  const [page, setPage] = useState("home"); // home | especialidades | busqueda
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [contactFirm, setContactFirm] = useState(null);
+  const [contactStage, setContactStage] = useState("policy"); // policy | form
+  const [showAuth, setShowAuth] = useState(false);
+  const [showFav, setShowFav] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const [showJoinFirm, setShowJoinFirm] = useState(false);
+  const [user, setUser] = useLocalState("lexa_user", null);
+  const [favorites, setFavorites] = useLocalState("lexa_favorites", []);
+
+  const toggleFav = (name) => {
+    setFavorites(prev => prev.includes(name) ? prev.filter(n => n !== name) : [...prev, name]);
+  };
+
+  const openContact = (firm) => { setContactFirm(firm); setContactStage("policy"); };
+  const closeContact = () => { setContactFirm(null); setContactStage("policy"); };
+
+  const toTop = () => window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
+  const goEspecialidades = () => {
+    setPage("especialidades");
+    setSelectedCategory(null);
+    toTop();
+  };
+  const goHome = () => {
+    setPage("home");
+    setSelectedCategory(null);
+    toTop();
+  };
+  const goSection = (id) => {
+    setPage("home");
+    setSelectedCategory(null);
+    setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" }), 80);
+  };
+  const goNews = () => goSection("actualidad");
+  const pickCategory = (id) => {
+    setSelectedCategory(id);
+    setPage("especialidades");
+    toTop();
+  };
+  const runSearch = (q) => {
+    setSearchQuery(q);
+    setPage("busqueda");
+    toTop();
+  };
+  const logout = () => {
+    setUser(null);
+    setShowFav(false);
+  };
+
+  const BackHome = () => (
+    <div className="gutter pt-8">
+      <div className="max-w-7xl mx-auto">
+        <button onClick={goHome} className="link"><Icon name="chevronL" size={13} /> Inicio</button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      <div className="gutter py-2.5 text-center text-[10px] tracking-[0.22em] uppercase" style={{ background: "#182544", color: "#E9E3D8" }}>
+        Primera consulta confidencial<span className="hidden sm:inline"> <span style={{ color: "#D1A54A" }}>·</span> Bilbao <span style={{ color: "#D1A54A" }}>·</span> Madrid</span>
+      </div>
+      <Nav onLogoClick={goHome} onOpenMenu={() => setShowMenu(true)} onExplore={goEspecialidades} onNews={goNews} onOpenFav={() => setShowFav(true)} onOpenAuth={() => user ? setShowFav(true) : setShowAuth(true)} onContact={openContact} onRequireTerms={goEspecialidades} onSearch={runSearch} termsAccepted={termsAccepted} favCount={favorites.length} user={user} />
+
+      <main className="flex-1">
+        {page === "home" ? (
+          <>
+            <Hero onExplore={goEspecialidades} onNews={goNews} />
+            <Promises />
+            <HomeCategories onPick={pickCategory} onExplore={goEspecialidades} />
+            <OfertasBufetes favorites={favorites} toggleFav={toggleFav} onContact={openContact} />
+            <NewsFeed />
+            <JoinFirmsSection onOpen={() => setShowJoinFirm(true)} />
+          </>
+        ) : page === "busqueda" ? (
+          <>
+            <BackHome />
+            <SearchResultsPage query={searchQuery} favorites={favorites} toggleFav={toggleFav} onContact={openContact} onPickCategory={pickCategory} />
+          </>
+        ) : (
+          <>
+            <BackHome />
+            {!termsAccepted ? (
+              <TermsGate onAccept={() => setTermsAccepted(true)} />
+            ) : selectedCategory ? (
+              <CategoryResults categoryId={selectedCategory} favorites={favorites} toggleFav={toggleFav} onBack={() => setSelectedCategory(null)} onContact={openContact} />
+            ) : (
+              <CategoryGrid onPick={pickCategory} />
+            )}
+          </>
+        )}
+      </main>
+
+      <footer className="gutter pt-16" style={{ background: "var(--surface-2)", paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 96px)" }}>
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-14">
+            <div className="flex justify-center mb-4"><Logo size={48} /></div>
+            <div className="f-display text-[1.8rem] tracking-[0.32em] pl-[0.32em]">LEXA LG</div>
+            <div className="eyebrow justify-center mt-3">Legal Group · desde 2004</div>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10 text-[13.5px]">
+            <div className="col-span-2 md:col-span-1">
+              <div className="label mb-4">La casa</div>
+              <p className="muted leading-relaxed max-w-xs">Plataforma de intermediación que conecta clientes internacionales con despachos seleccionados en España.</p>
+            </div>
+            <div>
+              <div className="label mb-4">Especialidades</div>
+              <div className="flex flex-col gap-2.5 items-start">
+                {CATEGORIES.slice(0, 5).map(c => <button key={c.id} onClick={() => pickCategory(c.id)} className="muted hover:text-[var(--ink)] text-left">{c.label.split(/,| &/)[0]}</button>)}
+              </div>
+            </div>
+            <div>
+              <div className="label mb-4">&nbsp;</div>
+              <div className="flex flex-col gap-2.5 items-start">
+                {CATEGORIES.slice(5).map(c => <button key={c.id} onClick={() => pickCategory(c.id)} className="muted hover:text-[var(--ink)] text-left">{c.label.split(/,| &/)[0]}</button>)}
+              </div>
+            </div>
+            <div className="col-span-2 md:col-span-1">
+              <div className="label mb-4">Sedes</div>
+              <p className="muted leading-relaxed">Bilbao<br />Madrid</p>
+              <button onClick={() => setShowJoinFirm(true)} className="link-u mt-6">Únete como despacho</button>
+            </div>
+          </div>
+          <div className="mt-14 pt-6 flex flex-col md:flex-row justify-between gap-3 text-[11.5px] muted" style={{ borderTop: "1px solid var(--line)" }}>
+            <span>© Lexa LG — Legal Group</span>
+            <span>Prototipo demostrativo. Los despachos y datos mostrados son ficticios.</span>
+          </div>
+        </div>
+      </footer>
+
+      {contactFirm && contactStage === "policy" && (
+        <ConsentModal
+          onClose={closeContact}
+          onAccept={() => setContactStage("form")}
+        />
+      )}
+      {contactFirm && contactStage === "form" && (
+        <ContactFormModal
+          firm={contactFirm}
+          onClose={closeContact}
+          onSubmit={closeContact}
+        />
+      )}
+      {showMenu && <MenuDrawer onClose={() => setShowMenu(false)} onPick={pickCategory} onExplore={goEspecialidades} onNews={goNews} onOfertas={() => goSection("ofertas")} onJoin={() => setShowJoinFirm(true)} />}
+      {showAuth && <AuthModal onClose={() => setShowAuth(false)} onLogin={(u) => { setUser(u); setShowAuth(false); }} />}
+      {showFav && <FavoritesPanel favorites={favorites} toggleFav={toggleFav} onClose={() => setShowFav(false)} user={user} onLogout={logout} />}
+      {showJoinFirm && <JoinFirmModal onClose={() => setShowJoinFirm(false)} />}
+
+      <Concierge onOpenWizard={goEspecialidades} />
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+
+</body>
+</html>
