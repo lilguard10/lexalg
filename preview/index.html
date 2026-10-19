@@ -19,7 +19,7 @@
   .stage{ height:100%; display:flex; align-items:center; justify-content:center; gap:56px;
     padding:16px max(16px, env(safe-area-inset-right, 0px)) 16px max(16px, env(safe-area-inset-left, 0px)); }
   .side{ width:240px; display:flex; flex-direction:column; gap:28px; }
-  .brand{ font-family:var(--f-display); font-size:30px; letter-spacing:.32em; line-height:1; }
+  .brand{ font-family:var(--f-display); font-size:26px; letter-spacing:.28em; line-height:1; white-space:nowrap; }
   .eyebrow{ font-size:10px; letter-spacing:.24em; text-transform:uppercase; color:var(--ink-2); }
   .side p{ font-size:13.5px; line-height:1.6; color:var(--ink-2); margin:0; }
   .seg{ display:flex; border:1px solid var(--line); }
@@ -140,7 +140,16 @@
       apply();
     });
   });
+  // Como en iOS: barras de desplazamiento superpuestas, sin ocupar ancho
+  function hideScrollbars(){
+    var doc; try { doc = frame.contentDocument; } catch (e) {}
+    if (!doc || !doc.head || doc.getElementById('ios-scroll')) return;
+    var st = doc.createElement('style'); st.id = 'ios-scroll';
+    st.textContent = 'html,body,*{scrollbar-width:none!important}::-webkit-scrollbar{width:0!important;height:0!important;display:none!important}html,body{overflow-x:hidden!important;overflow-x:clip!important}';
+    doc.head.appendChild(st);
+  }
   frame.addEventListener('load', function(){
+    hideScrollbars();
     apply();
     var n = new Date();
     document.getElementById('stamp').textContent = 'Cargada a las ' + n.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });

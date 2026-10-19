@@ -40,7 +40,8 @@
   }
   html{ scroll-behavior:smooth; scroll-padding-top:calc(76px + env(safe-area-inset-top, 0px)); }
   *{ box-sizing:border-box; }
-  body{ margin:0; background:var(--bg); color:var(--ink); font-family:var(--f-body); font-weight:300; font-size:15px; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+  body{ margin:0; background:var(--bg); color:var(--ink); font-family:var(--f-body); font-weight:300; font-size:15px; -webkit-font-smoothing:antialiased; overflow-x:hidden; overflow-x:clip; }
+  html{ overflow-x:hidden; overflow-x:clip; }
   body::before{ content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top, 0px); z-index:45; background:var(--bg); }
   ::selection{ background:var(--ink); color:var(--on-ink); }
   button{ color:inherit; font-weight:inherit; }
@@ -431,7 +432,7 @@ function Hero({ onExplore, onNews }) {
       <div className="gutter relative max-w-7xl mx-auto flex flex-col items-center justify-end text-center pb-14 md:pb-20 pt-32"
         style={{ minHeight: "clamp(500px, 74vh, 720px)" }}>
         <Logo size={56} />
-        <div className="eyebrow mt-7">Bilbao · Madrid · Desde 2004</div>
+        <div className="eyebrow mt-7">Sede en Bilbao · Desde 2004</div>
         <h1 className="f-display mt-5 leading-[0.98]" style={{ fontSize: "clamp(2.9rem, 7.4vw, 6rem)", fontWeight: 300 }}>
           El bufete correcto,<br /><em className="italic" style={{ color: "var(--accent)" }}>para el caso correcto.</em>
         </h1>
@@ -1206,10 +1207,10 @@ function Concierge({ onOpenWizard }) {
         </div>
       )}
       <button onClick={() => setOpen(o => !o)} aria-label={open ? "Cerrar concierge" : "Abrir concierge"}
-        className="fixed z-50 h-12 px-5 flex items-center gap-2.5 transition-opacity hover:opacity-85"
+        className="fixed z-50 w-11 h-11 md:w-auto md:h-12 md:px-5 flex items-center justify-center gap-2.5 transition-opacity hover:opacity-85"
         style={{ ...edge, bottom: "calc(env(safe-area-inset-bottom, 0px) + 20px)", background: "var(--ink)", color: "var(--on-ink)", boxShadow: "var(--shadow)" }}>
         <Icon name={open ? "x" : "bot"} size={17} />
-        <span className="label" style={{ fontSize: 10 }}>{open ? "Cerrar" : "Concierge"}</span>
+        <span className="label hidden md:inline" style={{ fontSize: 10 }}>{open ? "Cerrar" : "Concierge"}</span>
       </button>
     </>
   );
@@ -1412,7 +1413,7 @@ function App() {
   return (
     <div className="min-h-screen flex flex-col">
       <div className="gutter py-2.5 text-center text-[10px] tracking-[0.22em] uppercase" style={{ background: "#182544", color: "#E9E3D8" }}>
-        Primera consulta confidencial<span className="hidden sm:inline"> <span style={{ color: "#D1A54A" }}>·</span> Bilbao <span style={{ color: "#D1A54A" }}>·</span> Madrid</span>
+        Primera consulta confidencial<span className="hidden sm:inline"> <span style={{ color: "#D1A54A" }}>·</span> Sede en Bilbao</span>
       </div>
       <Nav onLogoClick={goHome} onOpenMenu={() => setShowMenu(true)} onExplore={goEspecialidades} onNews={goNews} onOpenFav={() => setShowFav(true)} onOpenAuth={() => user ? setShowFav(true) : setShowAuth(true)} onContact={openContact} onRequireTerms={goEspecialidades} onSearch={runSearch} termsAccepted={termsAccepted} favCount={favorites.length} user={user} />
 
@@ -1470,8 +1471,8 @@ function App() {
               </div>
             </div>
             <div className="col-span-2 md:col-span-1">
-              <div className="label mb-4">Sedes</div>
-              <p className="muted leading-relaxed">Bilbao<br />Madrid</p>
+              <div className="label mb-4">Sede</div>
+              <p className="muted leading-relaxed">Bilbao, Bizkaia</p>
               <button onClick={() => setShowJoinFirm(true)} className="link-u mt-6">Únete como despacho</button>
             </div>
           </div>
