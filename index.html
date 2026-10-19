@@ -736,6 +736,96 @@ function SearchResultsPage({ query, favorites, toggleFav, onContact, onPickCateg
   );
 }
 
+/* ---------------------------------- PLAZOS Y GARANTÍAS ---------------------------------- */
+const HOURS_NOTE = "Horas laborables: de lunes a viernes, de 9:00 a 19:00, sin festivos.";
+function GuaranteesSection() {
+  const items = [
+    ["clock", "Contamos en horas laborables", "De lunes a viernes, de 9:00 a 19:00, sin festivos. Un caso que llega el viernes por la tarde se revisa el lunes por la mañana."],
+    ["user", "Revisamos tu caso nosotros", "El plazo de revisión depende solo de Lexa LG: 24 h laborables en Prioritario y 4 h en Premium."],
+    ["search", "Solo despachos con agenda abierta", "En Prioritario y Premium solo te proponemos despachos que ya tienen huecos libres dentro del plazo. La reunión sale de su agenda real."],
+    ["check", "Devolución automática", "Si no cumplimos el plazo o el despacho no encaja con tu caso, te devolvemos lo que pagaste sin que tengas que reclamarlo."],
+    ["gem", "Premium con plazas limitadas", "Atendemos 3 casos Premium al día para poder cumplir lo que prometemos. Cuando se completan, puedes elegir Prioritario."],
+    ["lock", "La reunión es gratuita", "Pagas el servicio de Lexa LG, nunca los honorarios del abogado ni un trato preferente: esos los pactas solo con el despacho."],
+  ];
+  return (
+    <section id="garantias" className="gutter py-20 md:py-28" style={{ background: "var(--surface-2)" }}>
+      <div className="max-w-6xl mx-auto">
+        <SectionHead eyebrow="Plazos y garantías" title="Solo prometemos lo que podemos cumplir" />
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-10">
+          {items.map(([icon, t, d]) => (
+            <div key={t} className="flex gap-4 min-w-0">
+              <span className="icon-disc"><Icon name={icon} size={18} /></span>
+              <div className="min-w-0">
+                <h3 className="f-display text-[1.3rem] leading-snug">{t}</h3>
+                <p className="text-[15.5px] muted leading-relaxed mt-1.5">{d}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------------------------------- PLANES PARA DESPACHOS ---------------------------------- */
+// Cuota fija por visibilidad: nunca depende de cuántos clientes, casos o reuniones recibe el despacho.
+const FIRM_PLANS = [
+  { id: "basico", name: "Básico", price: 0, lines: ["Perfil básico", "Aparece en las búsquedas"] },
+  { id: "pro", name: "Profesional", price: 49, lines: ["Perfil completo", "Recibe solicitudes estándar"] },
+  { id: "dest", name: "Destacado", price: 129, lines: ["Posición destacada, marcada como publicidad", "Botón «Solicitar reunión»", "Puede ser propuesto en casos Prioritario y Premium si abre huecos en su agenda"] },
+  { id: "prem", name: "Premium", price: 249, lines: ["Todo lo de Destacado", "Máxima visibilidad", "Perfil editorial: entrevista, fotos y vídeo", "Estadísticas avanzadas", "2–3 plazas por especialidad y ciudad"] },
+];
+const FIRM_EXTRAS = [
+  ["Especialidad o ciudad destacada adicional", "29 €/mes"],
+  ["Sello «Despacho verificado» (colegiación, seguro de RC y trayectoria)", "200 €/año"],
+  ["Onboarding premium: fotos y redacción del perfil", "300 € una vez"],
+  ["Artículo o guía patrocinada, marcada como publicidad", "150 €/artículo"],
+];
+
+function FirmPlansSection({ onJoin }) {
+  return (
+    <section id="planes-despachos" className="gutter py-20 md:py-28">
+      <div className="max-w-6xl mx-auto">
+        <SectionHead eyebrow="Planes para despachos" title="Cuota fija, sin comisiones">
+          <p className="text-[16.5px] muted max-w-xl">Pagas por visibilidad y herramientas, nunca por cliente captado: cumple con tu código deontológico. Si pagas el año por adelantado, te regalamos 2 meses.</p>
+        </SectionHead>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {FIRM_PLANS.map(f => (
+            <div key={f.id} className="p-6 flex flex-col" style={f.id === "prem" ? { background: "#182544", color: "#EEE8DE" } : { background: "var(--surface)", border: "1px solid var(--line)" }}>
+              <div className="f-display text-[1.5rem]">{f.name}</div>
+              <div className="f-display text-[2.1rem] leading-none mt-2">{f.price ? `${f.price} €` : "Gratis"}{f.price ? <span className="text-[14px]" style={{ opacity: .7 }}> / mes</span> : null}</div>
+              <ul className="mt-5 space-y-2 text-[15px] flex-1">
+                {f.lines.map(l => <li key={l} className="flex gap-2"><span className="shrink-0 mt-0.5" style={{ color: f.id === "prem" ? "#D1A54A" : "var(--accent)" }}><Icon name="check" size={15} /></span>{l}</li>)}
+              </ul>
+              <button onClick={() => onJoin(f.id)} className="btn btn-sm mt-6" style={f.id === "prem" ? { background: "#EEE8DE", color: "#182544" } : { border: "1px solid var(--ink)", color: "var(--ink)" }}>Elegir {f.name}</button>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-12 grid md:grid-cols-2 gap-10">
+          <div>
+            <div className="eyebrow mb-3">Extras a precio fijo</div>
+            {FIRM_EXTRAS.map(([k, v]) => (
+              <div key={k} className="flex justify-between gap-4 py-3 text-[15.5px]" style={{ borderTop: "1px solid var(--line)" }}>
+                <span>{k}</span><span className="f-mono shrink-0">{v}</span>
+              </div>
+            ))}
+          </div>
+          <div>
+            <div className="eyebrow mb-3">Con total claridad</div>
+            <ul className="space-y-3 text-[15.5px] leading-relaxed">
+              <li className="flex gap-2.5"><span className="shrink-0 mt-1" style={{ color: "var(--accent)" }}><Icon name="check" size={15} /></span>Te llegan clientes con el caso ya descrito: filtramos antes de la reunión.</li>
+              <li className="flex gap-2.5"><span className="shrink-0 mt-1" style={{ color: "var(--accent)" }}><Icon name="check" size={15} /></span>Ves cuánta gente visita tu perfil y qué busca en tu zona.</li>
+              <li className="flex gap-2.5"><span className="shrink-0 mt-1 muted"><Icon name="x" size={15} /></span>No garantizamos un número de clientes: la cuota es la misma aunque un mes lleguen pocos contactos.</li>
+              <li className="flex gap-2.5"><span className="shrink-0 mt-1 muted"><Icon name="x" size={15} /></span>No cobramos comisiones ni un porcentaje de tus honorarios.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ---------------------------------- ALTA DE BUFETES / ABOGADOS INDEPENDIENTES ---------------------------------- */
 function SentState({ title, children, onClose }) {
   return (
@@ -758,7 +848,8 @@ function ModalHead({ title, sub, eyebrow }) {
   );
 }
 
-function JoinFirmModal({ onClose }) {
+function JoinFirmModal({ onClose, initialPlan }) {
+  const [firmPlan, setFirmPlan] = useState(initialPlan || "pro");
   const [firmName, setFirmName] = useState("");
   const [email, setEmail] = useState("");
   const [specialty, setSpecialty] = useState(CATEGORIES[0].id);
@@ -785,6 +876,12 @@ function JoinFirmModal({ onClose }) {
               <div>
                 <label htmlFor="join-email" className="field-label">Correo electrónico de contacto</label>
                 <input id="join-email" value={email} onChange={e => setEmail(e.target.value)} type="email" className="field" />
+              </div>
+              <div>
+                <label htmlFor="join-plan" className="field-label">Plan</label>
+                <select id="join-plan" value={firmPlan} onChange={e => setFirmPlan(e.target.value)} className="field">
+                  {FIRM_PLANS.map(f => <option key={f.id} value={f.id}>{f.name} · {f.price ? `${f.price} €/mes` : "Gratis"}</option>)}
+                </select>
               </div>
               <div>
                 <label htmlFor="join-spec" className="field-label">Especialidad principal</label>
@@ -880,8 +977,8 @@ function ConsentModal({ onAccept, onClose }) {
 // Los plazos solo prometen lo que depende de Lexa LG (revisar el caso) y huecos que el despacho ya tiene abiertos en su agenda.
 const CLIENT_PLANS = [
   { id: "free", name: "Gratis", price: 0, lines: ["Escribes tú a los despachos que elijas", "Respuesta habitual: 3–7 días", "Tú explicas tu caso"] },
-  { id: "prio", name: "Prioritario", price: 39, tag: "Recomendado", lines: ["Revisamos tu caso en 24 h laborables", "Te proponemos los 3 despachos que mejor encajan", "Reunión en un hueco libre de su agenda en los 2 días laborables siguientes", "Si el despacho no encaja, te devolvemos los 39 €"] },
-  { id: "prem", name: "Premium", price: 79, lines: ["Revisamos tu caso en 4 h laborables", "Nuestra elección: el despacho ideal para ti, con 2 alternativas y sus honorarios orientativos", "Reunión el siguiente día laborable", "Tu caso resumido y la lista de documentos que debes llevar", "Un gestor de Lexa LG te acompaña 30 días", "Si el despacho no encaja, te devolvemos el importe"] },
+  { id: "prio", name: "Prioritario", price: 39, tag: "Recomendado", lines: ["Revisamos tu caso en 24 h laborables", "Te proponemos los 3 despachos que mejor encajan", "Reunión en un hueco libre de su agenda en los 2 días laborables siguientes", "Si no cumplimos el plazo o el despacho no encaja, te devolvemos los 39 €"] },
+  { id: "prem", name: "Premium", price: 79, lines: ["Revisamos tu caso en 4 h laborables", "Nuestra elección: el despacho ideal para ti, con 2 alternativas y sus honorarios orientativos", "Reunión el siguiente día laborable", "Tu caso resumido y la lista de documentos que debes llevar", "Un gestor de Lexa LG te acompaña 30 días", "Si no cumplimos el plazo o el despacho no encaja, te devolvemos el importe", "Plazas limitadas: 3 casos al día"] },
 ];
 const CLIENT_EXTRAS = [
   { id: "interp", name: "Intérprete en la reunión", price: 49 },
@@ -956,7 +1053,7 @@ function PlanPicker({ firm, onClose, onChoose }) {
           </div>
         )}
 
-        <p className="text-[14px] muted mt-6 text-center">La reunión con el despacho siempre es gratuita. Lo que pagas es el servicio de Lexa LG, nunca los honorarios del abogado.</p>
+        <p className="text-[14px] muted mt-6 text-center">La reunión con el despacho siempre es gratuita. Lo que pagas es el servicio de Lexa LG, nunca los honorarios del abogado.<br />{HOURS_NOTE}</p>
 
         <button onClick={() => onChoose({ plan, extras: p.price ? extras : [], total })} className="btn btn-primary w-full mt-6">
           {p.price ? `Continuar · ${total} €` : "Continuar gratis"}
@@ -1060,7 +1157,7 @@ function PayModal({ firm, choice, who, onClose }) {
                 <dt>Total (IVA incl.)</dt><dd className="f-mono">{choice.total} €</dd>
               </div>
             </dl>
-            <p className="text-[14px] muted mt-2">Si el despacho propuesto no encaja con tu caso, te devolvemos el importe. La reunión con el abogado es gratuita.</p>
+            <p className="text-[14px] muted mt-2">Si no cumplimos el plazo o el despacho propuesto no encaja con tu caso, te devolvemos el importe automáticamente. La reunión con el abogado es gratuita. {HOURS_NOTE}</p>
             <div className="mt-6 p-4 text-[14px] flex gap-3" style={{ background: "var(--surface-2)" }}>
               <Icon name="lock" size={16} className="shrink-0 mt-0.5" />
               <span>Aquí irá el pago seguro con tarjeta (Stripe). En este prototipo no se pide ningún dato de pago.</span>
@@ -1795,7 +1892,9 @@ function App() {
             <NewsFeed />
             <OfertasBufetes favorites={favorites} toggleFav={toggleFav} onContact={openContact} />
             <EmpresasSection onRequest={setBizPlan} />
-            <JoinFirmsSection onOpen={() => setShowJoinFirm(true)} />
+            <GuaranteesSection />
+            <JoinFirmsSection onOpen={() => setShowJoinFirm("pro")} />
+            <FirmPlansSection onJoin={setShowJoinFirm} />
           </>
         ) : page === "busqueda" ? (
           <>
@@ -1843,7 +1942,11 @@ function App() {
             <div className="col-span-2 md:col-span-1">
               <div className="label mb-4">Sede</div>
               <p className="muted leading-relaxed">Bilbao, Bizkaia</p>
-              <button onClick={() => setShowJoinFirm(true)} className="link-u mt-6">Únete como despacho</button>
+              <div className="flex flex-col items-start gap-3 mt-6">
+                <button onClick={() => goSection("garantias")} className="link-u">Plazos y garantías</button>
+                <button onClick={() => goSection("empresas")} className="link-u">Planes para empresas</button>
+                <button onClick={() => goSection("planes-despachos")} className="link-u">Planes para despachos</button>
+              </div>
             </div>
           </div>
           <div className="mt-14 pt-6 flex flex-col md:flex-row justify-between gap-3 text-[13px] muted" style={{ borderTop: "1px solid var(--line)" }}>
@@ -1861,7 +1964,7 @@ function App() {
       {showMenu && <MenuDrawer onClose={() => setShowMenu(false)} onPick={pickCategory} onExplore={goEspecialidades} onNews={goNews} onOfertas={() => goSection("ofertas")} onJoin={() => setShowJoinFirm(true)} />}
       {showAuth && <AuthModal onClose={() => setShowAuth(false)} onLogin={(u) => { setUser(u); setShowAuth(false); }} />}
       {showFav && <FavoritesPanel favorites={favorites} toggleFav={toggleFav} onClose={() => setShowFav(false)} user={user} onLogout={logout} />}
-      {showJoinFirm && <JoinFirmModal onClose={() => setShowJoinFirm(false)} />}
+      {showJoinFirm && <JoinFirmModal initialPlan={typeof showJoinFirm === "string" ? showJoinFirm : "pro"} onClose={() => setShowJoinFirm(false)} />}
 
       {sheet && (
         <FirmSheet firm={sheet.firm} ctx={sheet.ctx} onClose={() => setSheet(null)}
