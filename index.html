@@ -1013,7 +1013,7 @@ function ConsentModal({ onAccept, onClose }) {
 // El cliente paga por el servicio de Lexa LG (ver más, ir más rápido, ir mejor preparado), nunca por el despacho ni por sus honorarios.
 const ACCOUNTS = {
   free: { name: "Gratis", price: 0, rank: 0, lines: ["Ves los 3 despachos que mejor encajan con tu caso", "Contactas gratis con ellos", "Análisis de tu caso con Aurki", "Respuesta habitual del despacho: 3–7 días"] },
-  plus: { name: "Plus", price: 19, rank: 1, tag: "Recomendado", lines: ["Ves todos los despachos que encajan, no solo 3", "Revisamos tu caso en 24 h laborables", "Reunión en un hueco libre de su agenda en 2 días laborables", "Comparas honorarios, tamaño y trayectoria"] },
+  plus: { name: "Plus", price: 19, rank: 1, trial: 7, tag: "7 días gratis", lines: ["Ves todos los despachos que encajan, no solo 3", "Revisamos tu caso en 24 h laborables", "Reunión en un hueco libre de su agenda en 2 días laborables", "Comparas honorarios, tamaño y trayectoria"] },
   premium: { name: "Premium", price: 49, rank: 2, lines: ["Todo lo de Plus", "Despacho a medida: te decimos cuál es el ideal para ti y por qué", "Revisión en 4 h laborables y reunión al siguiente día laborable", "Tu caso resumido y la lista de documentos para la reunión", "Intérprete en la reunión incluido", "Un gestor de Lexa LG te acompaña"] },
   emp: { name: "Empresas", price: 99, rank: 1, biz: true, lines: ["Todo lo de Plus para tu equipo (hasta 3 personas)", "Hasta 3 casos al mes con atención prioritaria", "Panel con todos los casos de la empresa", "Una sola factura mensual"] },
   empplus: { name: "Empresas Plus", price: 249, rank: 2, biz: true, lines: ["Todo lo de Premium, en casos ilimitados", "Despacho a medida en cada caso", "Gestor de cuenta fijo", "Usuarios ilimitados"] },
@@ -1022,10 +1022,14 @@ const PERSONAL_IDS = ["free", "plus", "premium"];
 const BUSINESS_IDS = ["emp", "empplus"];
 const FREE_VISIBLE = 3;
 const ACCOUNT_NOTE = "Sin permanencia: cancelas cuando quieras. La reunión con el despacho siempre es gratuita y los honorarios los pactas solo con él.";
-const AccountContext = React.createContext({ account: "free", openPlans: () => {} });
+const AccountContext = React.createContext({ account: "free", openPlans: () => {}, trialUsed: false });
+const TRIAL_DAYS = 7;
+const fmtDay = (d) => new Date(d).toLocaleDateString("es-ES", { day: "numeric", month: "long" });
 
 function PlanCard({ id, current, onChoose }) {
+  const { trialUsed } = React.useContext(AccountContext);
   const a = ACCOUNTS[id];
+  const trialOn = a.trial && !trialUsed && current !== id;
   const dark = id === "premium" || id === "empplus";
   const isCurrent = current === id;
   return (
@@ -1036,12 +1040,13 @@ function PlanCard({ id, current, onChoose }) {
           : a.tag ? <span className="pill-lacre" style={{ background: "var(--ink)", color: "var(--on-ink)" }}>{a.tag}</span> : null}
       </div>
       <div className="f-display text-[2.3rem] leading-none mt-3">{a.price ? `${a.price} €` : "0 €"}<span className="text-[14.5px]" style={{ opacity: .7 }}>{a.price ? " / mes" : " · para siempre"}</span></div>
+      {trialOn && <div className="mt-2 text-[14.5px]" style={{ fontWeight: 700, color: "var(--accent)" }}>Gratis {a.trial} días, después {a.price} €/mes</div>}
       <ul className="mt-5 space-y-2.5 text-[15.5px] leading-snug flex-1">
         {a.lines.map(l => <li key={l} className="flex gap-2.5"><span className="shrink-0 mt-0.5" style={{ color: dark ? "#D1A54A" : "var(--accent)" }}><Icon name="check" size={15} /></span>{l}</li>)}
       </ul>
       <button onClick={() => onChoose(id)} disabled={isCurrent} className="btn mt-7 disabled:opacity-50 disabled:cursor-default"
         style={dark ? { background: "#EEE8DE", color: "#182544" } : a.price ? { background: "var(--ink)", color: "var(--on-ink)" } : { border: "1px solid var(--ink)", color: "var(--ink)" }}>
-        {isCurrent ? "Cuenta actual" : a.price ? `Elegir ${a.name}` : "Usar cuenta gratis"}
+        {isCurrent ? "Cuenta actual" : trialOn ? `Probar ${a.trial} días gratis` : a.price ? `Elegir ${a.name}` : "Usar cuenta gratis"}
       </button>
     </div>
   );
@@ -1076,7 +1081,7 @@ function AccountsSection({ current, onChoose }) {
   return (
     <section id="cuentas" className="gutter py-20 md:py-28" style={{ borderTop: "1px solid var(--line)" }}>
       <div className="max-w-6xl mx-auto">
-        <SectionHead eyebrow="Cuentas" title="Empieza gratis. Mejora tu búsqueda cuando lo necesites" />
+        <SectionHead eyebrow="Cuentas" title="Empieza gratis. Prueba Plus 7 días sin pagar nada" />
         <PlanTabs tab={tab} setTab={setTab} />
         <PlanGrid tab={tab} current={current} onChoose={onChoose} />
       </div>
@@ -1099,7 +1104,10 @@ function PlansModal({ initialTab, current, onChoose, onClose }) {
 }
 
 function CheckoutModal({ id, onConfirm, onClose }) {
+  const { trialUsed } = React.useContext(AccountContext);
   const a = ACCOUNTS[id];
+  const [isTrial] = useState(!!a.trial && !trialUsed);
+  const [ends] = useState(() => Date.now() + TRIAL_DAYS * 864e5);
   const [company, setCompany] = useState("");
   const [done, setDone] = useState(false);
   const ok = !a.biz || company.trim();
@@ -1108,8 +1116,8 @@ function CheckoutModal({ id, onConfirm, onClose }) {
       <div className="modal max-w-md scrollbar-none">
         <button type="button" onClick={onClose} className="absolute top-5 right-5 muted hover:opacity-70" aria-label="Cerrar"><Icon name="x" size={18} /></button>
         {done ? (
-          <SentState title={`Ya tienes cuenta ${a.name}`} onClose={onClose}>
-            {a.rank >= 2 ? "Verás todos los despachos y, en cada búsqueda, el despacho a medida para tu caso." : "Ya ves todos los despachos que encajan con tu caso y tus contactos van por la vía prioritaria."}
+          <SentState title={isTrial ? `Tu prueba ${a.name} ha empezado` : `Ya tienes cuenta ${a.name}`} onClose={onClose}>
+            {isTrial ? `Hasta el ${fmtDay(ends)} ves todos los despachos que encajan con tu caso y tus contactos van por la vía prioritaria. Si cancelas antes de esa fecha, no pagas nada.` : a.rank >= 2 ? "Verás todos los despachos y, en cada búsqueda, el despacho a medida para tu caso." : "Ya ves todos los despachos que encajan con tu caso y tus contactos van por la vía prioritaria."}
             <span className="block mt-3 text-[13px]">Prototipo: no se ha realizado ningún cargo.</span>
           </SentState>
         ) : (
@@ -1125,14 +1133,15 @@ function CheckoutModal({ id, onConfirm, onClose }) {
               {a.lines.map(l => <li key={l} className="flex gap-2.5"><span className="shrink-0 mt-0.5" style={{ color: "var(--accent)" }}><Icon name="check" size={15} /></span>{l}</li>)}
             </ul>
             <div className="flex justify-between gap-4 py-4 text-[17px]" style={{ borderTop: "1px solid var(--ink)", fontWeight: 700 }}>
-              <span>Total al mes (IVA incl.)</span><span className="f-mono">{a.price} €</span>
+              <span>{isTrial ? "Hoy pagas" : "Total al mes (IVA incl.)"}</span><span className="f-mono">{isTrial ? "0 €" : `${a.price} €`}</span>
             </div>
+            {isTrial && <p className="text-[15px] mb-3">Desde el <strong>{fmtDay(ends)}</strong>: {a.price} €/mes (IVA incl.) si no cancelas antes. Te lo recordaremos por correo 2 días antes. Una prueba por persona.</p>}
             <p className="text-[14px] muted">{ACCOUNT_NOTE}</p>
             <div className="mt-5 p-4 text-[14px] flex gap-3" style={{ background: "var(--surface-2)" }}>
               <Icon name="lock" size={16} className="shrink-0 mt-0.5" />
               <span>Aquí irá el pago seguro con tarjeta (Stripe). En este prototipo no se pide ningún dato de pago.</span>
             </div>
-            <button onClick={() => { onConfirm(id); setDone(true); }} disabled={!ok} className="btn btn-primary w-full mt-6">Activar cuenta (demo) · {a.price} €/mes</button>
+            <button onClick={() => { onConfirm(id, isTrial ? ends : null); setDone(true); }} disabled={!ok} className="btn btn-primary w-full mt-6">{isTrial ? `Empezar ${TRIAL_DAYS} días gratis (demo)` : `Activar cuenta (demo) · ${a.price} €/mes`}</button>
           </>
         )}
       </div>
@@ -1142,7 +1151,7 @@ function CheckoutModal({ id, onConfirm, onClose }) {
 
 /* Listado de despachos según la cuenta: la gratuita ve los 3 de mejor encaje; Premium recibe además su despacho a medida */
 function GatedResults({ list, ctx, favorites, toggleFav, onContact, topPickFirst }) {
-  const { account, openPlans } = React.useContext(AccountContext);
+  const { account, openPlans, trialUsed } = React.useContext(AccountContext);
   const openFirm = React.useContext(FirmSheetContext);
   const rank = ACCOUNTS[account].rank;
   const visible = rank >= 1 ? list : list.slice(0, FREE_VISIBLE);
@@ -1193,7 +1202,7 @@ function GatedResults({ list, ctx, favorites, toggleFav, onContact, topPickFirst
             <h3 className="f-display text-[1.5rem] leading-snug">Hay {hidden.length} {hidden.length === 1 ? "despacho más" : "despachos más"} que {hidden.length === 1 ? "encaja" : "encajan"} con tu caso</h3>
             <p className="text-[15.5px] muted mt-1">Con la cuenta Plus los ves todos y tu contacto va por la vía prioritaria: reunión en 2 días laborables.</p>
           </div>
-          <button onClick={() => openPlans("personal")} className="btn btn-primary shrink-0">Ver todos · 19 €/mes</button>
+          <button onClick={() => openPlans("personal")} className="btn btn-primary shrink-0">{trialUsed ? "Ver todos · 19 €/mes" : "Pruébalo 7 días gratis"}</button>
         </div>
       )}
     </>
@@ -1235,7 +1244,7 @@ function ContactFormModal({ firm, account, onClose }) {
 
             <div className="p-4 mb-7 text-[14.5px] leading-snug" style={{ background: "var(--surface-2)" }}>
               {RESPONSE_BY_RANK[a.rank](firm.name)}
-              {a.rank === 0 && <button type="button" onClick={() => { onClose(); openPlans("personal"); }} className="link-u mt-2.5 flex">¿Lo necesitas antes? Cuenta Plus</button>}
+              {a.rank === 0 && <button type="button" onClick={() => { onClose(); openPlans("personal"); }} className="link-u mt-2.5 flex">¿Lo necesitas antes? Prueba Plus 7 días gratis</button>}
             </div>
 
             <div className="space-y-6">
@@ -1402,7 +1411,7 @@ function FirmSheet({ firm, ctx, onClose, onContact, onSwitch, isFav, onToggleFav
 
             {similar.length > 0 && account === "free" && (
               <button onClick={() => { onClose(); openPlans("personal"); }} className="mt-10 w-full text-left p-5 flex items-center gap-3" style={{ border: "1px solid var(--line)" }}>
-                <span className="flex-1 text-[15.5px]">Compara con {similar.length} despachos parecidos con la cuenta Plus</span>
+                <span className="flex-1 text-[15.5px]">Compara con {similar.length} despachos parecidos: prueba Plus 7 días gratis</span>
                 <Icon name="chevronR" size={16} />
               </button>
             )}
@@ -1506,7 +1515,7 @@ function NewsFeed() {
 
 /* ---------------------------------- FAVORITES PANEL ---------------------------------- */
 function FavoritesPanel({ favorites, toggleFav, onClose, user, onLogout }) {
-  const { account, openPlans } = React.useContext(AccountContext);
+  const { account, openPlans, trialEnds } = React.useContext(AccountContext);
   const openFirm = React.useContext(FirmSheetContext);
   const favFirms = FIRMS.filter(f => favorites.includes(f.name));
   return (
@@ -1516,7 +1525,7 @@ function FavoritesPanel({ favorites, toggleFav, onClose, user, onLogout }) {
         <div className="flex items-start justify-between mb-10">
           <div>
             <div className="eyebrow">{user ? `Hola, ${user.name}` : "Mi selección"}</div>
-            <button onClick={() => { onClose(); openPlans(ACCOUNTS[account].biz ? "biz" : "personal"); }} className="text-[14px] muted mt-1 underline underline-offset-4">Cuenta {ACCOUNTS[account].name} · cambiar</button>
+            <button onClick={() => { onClose(); openPlans(ACCOUNTS[account].biz ? "biz" : "personal"); }} className="text-[14px] muted mt-1 underline underline-offset-4">Cuenta {ACCOUNTS[account].name}{account === "plus" && trialEnds > Date.now() ? ` · prueba gratis hasta el ${fmtDay(trialEnds)}` : ""} · cambiar</button>
             <h3 className="f-display text-[2.2rem] mt-2">Favoritos</h3>
           </div>
           <button onClick={onClose} className="muted hover:opacity-70" aria-label="Cerrar"><Icon name="x" /></button>
@@ -1879,7 +1888,9 @@ function App() {
   const [plansTab, setPlansTab] = useState(null); // abre el selector de cuentas
   const [checkout, setCheckout] = useState(null); // id de la cuenta a contratar
   const choosePlan = (id) => { setPlansTab(null); if (ACCOUNTS[id].price) setCheckout(id); else setAccount("free"); };
-  const accountCtx = useMemo(() => ({ account, openPlans: (tab) => setPlansTab(tab || "personal") }), [account]);
+  const [trialEnds, setTrialEnds] = useLocalState("lexa_trial_ends", null);
+  const confirmAccount = (id, ends) => { setAccount(id); if (ends) setTrialEnds(ends); };
+  const accountCtx = useMemo(() => ({ account, openPlans: (tab) => setPlansTab(tab || "personal"), trialUsed: !!trialEnds, trialEnds }), [account, trialEnds]);
   const [showAuth, setShowAuth] = useState(false);
   const [showFav, setShowFav] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -2032,7 +2043,7 @@ function App() {
       {contact?.stage === "policy" && <ConsentModal onClose={closeContact} onAccept={() => nextStage({ stage: "form" })} />}
       {contact?.stage === "form" && <ContactFormModal firm={contact.firm} account={account} onClose={closeContact} />}
       {plansTab && <PlansModal initialTab={plansTab} current={account} onChoose={choosePlan} onClose={() => setPlansTab(null)} />}
-      {checkout && <CheckoutModal id={checkout} onConfirm={setAccount} onClose={() => setCheckout(null)} />}
+      {checkout && <CheckoutModal id={checkout} onConfirm={confirmAccount} onClose={() => setCheckout(null)} />}
       {showMenu && <MenuDrawer onClose={() => setShowMenu(false)} onPick={pickCategory} onExplore={goEspecialidades} onNews={goNews} onOfertas={() => goSection("ofertas")} onAccounts={() => goSection("cuentas")} onJoin={() => setShowJoinFirm(true)} />}
       {showAuth && <AuthModal onClose={() => setShowAuth(false)} onLogin={(u) => { setUser(u); setShowAuth(false); }} />}
       {showFav && <FavoritesPanel favorites={favorites} toggleFav={toggleFav} onClose={() => setShowFav(false)} user={user} onLogout={logout} />}
