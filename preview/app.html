@@ -474,7 +474,7 @@ function Promises() {
   const items = [
     ["lock", "Consulta confidencial", "Tus datos solo llegan al despacho que elijas."],
     ["scale", `${FIRMS.length} despachos seleccionados`, "En Bilbao y Madrid, en diez especialidades."],
-    ["check", "Sin coste para ti", "El comparador es gratuito para el cliente."],
+    ["check", "Empieza gratis", "Con la cuenta gratuita ves y contactas los despachos que mejor encajan."],
   ];
   return (
     <section className="gutter py-10" style={{ borderBottom: "1px solid var(--line)" }}>
@@ -699,7 +699,6 @@ function CategoryResults({ categoryId, favorites, toggleFav, onBack, onContact }
       <div className="max-w-7xl mx-auto">
         <button onClick={onBack} className="link mb-10"><Icon name="chevronL" size={13} /> Todas las especialidades</button>
         <SectionHead eyebrow={cat.label} title="Mejores bufetes para tu caso">
-          <div className="text-[14.5px] muted">{matches.length} despachos</div>
           {!refining && (
             <button onClick={() => setRefining(true)} className="btn btn-outline btn-sm">Afinar en 2 preguntas</button>
           )}
@@ -718,13 +717,7 @@ function CategoryResults({ categoryId, favorites, toggleFav, onBack, onContact }
             onComplete={(ans) => { setRefineAnswers(ans); setRefining(false); }} />
         )}
 
-        <DoneForYou />
-
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-3 md:gap-x-6 gap-y-12">
-          {matches.map((firm, i) => (
-            <FirmCard key={firm.name} firm={firm} isFav={favorites.includes(firm.name)} onToggleFav={toggleFav} onContact={() => onContact(firm)} topPick={!!refineAnswers && i === 0} ctx={{ categoryId, answers: refineAnswers }} />
-          ))}
-        </div>
+        <GatedResults list={matches} ctx={{ categoryId, answers: refineAnswers }} favorites={favorites} toggleFav={toggleFav} onContact={onContact} topPickFirst={!!refineAnswers} />
       </div>
     </section>
   );
@@ -766,15 +759,9 @@ function SearchResultsPage({ query, favorites, toggleFav, onContact, onPickCateg
         {results.length === 0 ? (
           <p className="text-[16.5px] muted max-w-xl mx-auto text-center">No encontramos despachos para «{query}». Prueba con otro nombre o describe tu caso con otras palabras (p. ej. «impuestos», «visado», «herencia»).</p>
         ) : (
-          <>
-            <DoneForYou />
-            <div className="eyebrow justify-center mb-8">Bufetes que encajan · {results.length}</div>
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-3 md:gap-x-6 gap-y-12 mb-20">
-              {results.map(firm => (
-                <FirmCard key={firm.name} firm={firm} isFav={favorites.includes(firm.name)} onToggleFav={toggleFav} onContact={() => onContact(firm)} ctx={{ query }} />
-              ))}
-            </div>
-          </>
+          <div className="mb-20">
+            <GatedResults list={[...results, ...alsoInterested]} ctx={{ query }} favorites={favorites} toggleFav={toggleFav} onContact={onContact} />
+          </div>
         )}
 
         {alsoInterested.length > 0 && (
@@ -797,10 +784,10 @@ const HOURS_NOTE = "Horas laborables: de lunes a viernes, de 9:00 a 19:00, sin f
 function GuaranteesSection() {
   const items = [
     ["clock", "Contamos en horas laborables", "De lunes a viernes, de 9:00 a 19:00, sin festivos. Un caso que llega el viernes por la tarde se revisa el lunes por la mañana."],
-    ["user", "Revisamos tu caso nosotros", "El plazo de revisión depende solo de Lexa LG: 24 h laborables en Prioritario y 4 h en Premium."],
-    ["search", "Solo despachos con agenda abierta", "En Prioritario y Premium solo te proponemos despachos que ya tienen huecos libres dentro del plazo. La reunión sale de su agenda real."],
-    ["check", "Devolución automática", "Si no cumplimos el plazo o el despacho no encaja con tu caso, te devolvemos lo que pagaste sin que tengas que reclamarlo."],
-    ["gem", "Premium con plazas limitadas", "Atendemos 3 casos Premium al día para poder cumplir lo que prometemos. Cuando se completan, puedes elegir Prioritario."],
+    ["user", "Revisamos tu caso nosotros", "El plazo de revisión depende solo de Lexa LG: 24 h laborables con cuenta Plus y 4 h con Premium."],
+    ["search", "Solo despachos con agenda abierta", "Con cuenta Plus o Premium solo te proponemos despachos que ya tienen huecos libres dentro del plazo. La reunión sale de su agenda real."],
+    ["check", "Devolución automática", "Si no cumplimos el plazo, te devolvemos la cuota de ese mes sin que tengas que reclamarlo."],
+    ["gem", "Premium con plazas limitadas", "Limitamos el número de cuentas Premium para poder cumplir los plazos que prometemos."],
     ["lock", "La reunión es gratuita", "Pagas el servicio de Lexa LG, nunca los honorarios del abogado ni un trato preferente: esos los pactas solo con el despacho."],
   ];
   return (
@@ -828,7 +815,7 @@ function GuaranteesSection() {
 const FIRM_PLANS = [
   { id: "basico", name: "Básico", price: 0, lines: ["Perfil básico", "Aparece en las búsquedas"] },
   { id: "pro", name: "Profesional", price: 49, lines: ["Perfil completo", "Recibe solicitudes estándar"] },
-  { id: "dest", name: "Destacado", price: 129, lines: ["Posición destacada, marcada como publicidad", "Botón «Solicitar reunión»", "Puede ser propuesto en casos Prioritario y Premium si abre huecos en su agenda"] },
+  { id: "dest", name: "Destacado", price: 129, lines: ["Posición destacada, marcada como publicidad", "Botón «Solicitar reunión»", "Puede ser propuesto a clientes Plus y Premium si abre huecos en su agenda"] },
   { id: "prem", name: "Premium", price: 249, lines: ["Todo lo de Destacado", "Máxima visibilidad", "Perfil editorial: entrevista, fotos y vídeo", "Estadísticas avanzadas", "2–3 plazas por especialidad y ciudad"] },
 ];
 const FIRM_EXTRAS = [
@@ -1029,128 +1016,233 @@ function ConsentModal({ onAccept, onClose }) {
   );
 }
 
-/* ---------------------------------- NIVELES DE SERVICIO PARA EL CLIENTE ---------------------------------- */
-// Los plazos solo prometen lo que depende de Lexa LG (revisar el caso) y huecos que el despacho ya tiene abiertos en su agenda.
-const CLIENT_PLANS = [
-  { id: "free", name: "Gratis", price: 0, lines: ["Escribes tú a los despachos que elijas", "Respuesta habitual: 3–7 días", "Tú explicas tu caso"] },
-  { id: "prio", name: "Prioritario", price: 39, tag: "Recomendado", lines: ["Revisamos tu caso en 24 h laborables", "Te proponemos los 3 despachos que mejor encajan", "Reunión en un hueco libre de su agenda en los 2 días laborables siguientes", "Si no cumplimos el plazo o el despacho no encaja, te devolvemos los 39 €"] },
-  { id: "prem", name: "Premium", price: 79, lines: ["Revisamos tu caso en 4 h laborables", "Nuestra elección: el despacho ideal para ti, con 2 alternativas y sus honorarios orientativos", "Reunión el siguiente día laborable", "Tu caso resumido y la lista de documentos que debes llevar", "Un gestor de Lexa LG te acompaña 30 días", "Si no cumplimos el plazo o el despacho no encaja, te devolvemos el importe", "Plazas limitadas: 3 casos al día"] },
-];
-const CLIENT_EXTRAS = [
-  { id: "interp", name: "Intérprete en la reunión", price: 49 },
-  { id: "more", name: "Otros 3 despachos recomendados", price: 19 },
-  { id: "same", name: "Reunión el mismo día (si no hay hueco, se devuelve)", price: 30 },
-];
-const planById = (id) => CLIENT_PLANS.find(p => p.id === id);
-const PlansContext = React.createContext(() => {});
+/* ---------------------------------- TIPOS DE CUENTA (particulares y empresas) ---------------------------------- */
+// El cliente paga por el servicio de Lexa LG (ver más, ir más rápido, ir mejor preparado), nunca por el despacho ni por sus honorarios.
+const ACCOUNTS = {
+  free: { name: "Gratis", price: 0, rank: 0, lines: ["Ves los 3 despachos que mejor encajan con tu caso", "Contactas gratis con ellos", "Análisis de tu caso con Aurki", "Respuesta habitual del despacho: 3–7 días"] },
+  plus: { name: "Plus", price: 19, rank: 1, tag: "Recomendado", lines: ["Ves todos los despachos que encajan, no solo 3", "Revisamos tu caso en 24 h laborables", "Reunión en un hueco libre de su agenda en 2 días laborables", "Si no cumplimos el plazo, te devolvemos la cuota del mes"] },
+  premium: { name: "Premium", price: 49, rank: 2, lines: ["Todo lo de Plus", "Despacho a medida: te decimos cuál es el ideal para ti y por qué", "Revisión en 4 h laborables y reunión al siguiente día laborable", "Tu caso resumido y la lista de documentos para la reunión", "Intérprete en la reunión incluido", "Un gestor de Lexa LG te acompaña"] },
+  emp: { name: "Empresas", price: 99, rank: 1, biz: true, lines: ["Todo lo de Plus para tu equipo (hasta 3 personas)", "Hasta 3 casos al mes con atención prioritaria", "Panel con todos los casos de la empresa", "Una sola factura mensual"] },
+  empplus: { name: "Empresas Plus", price: 249, rank: 2, biz: true, lines: ["Todo lo de Premium, en casos ilimitados", "Despacho a medida en cada caso", "Gestor de cuenta fijo", "Usuarios ilimitados"] },
+};
+const PERSONAL_IDS = ["free", "plus", "premium"];
+const BUSINESS_IDS = ["emp", "empplus"];
+const FREE_VISIBLE = 3;
+const ACCOUNT_NOTE = "Sin permanencia: cancelas cuando quieras. La reunión con el despacho siempre es gratuita y los honorarios los pactas solo con él.";
+const AccountContext = React.createContext({ account: "free", openPlans: () => {} });
 
-// Aviso "que lo hagamos por ti" en los listados
-function DoneForYou() {
-  const openPlans = React.useContext(PlansContext);
+function PlanCard({ id, current, onChoose }) {
+  const a = ACCOUNTS[id];
+  const dark = id === "premium" || id === "empplus";
+  const isCurrent = current === id;
   return (
-    <div className="mb-12 p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-5" style={{ border: "1px solid var(--ink)" }}>
-      <div className="flex gap-4 min-w-0">
-        <span className="shrink-0"><Logo size={40} /></span>
-        <div className="min-w-0">
-          <div className="eyebrow mb-1.5">¿Prefieres que lo hagamos por ti?</div>
-          <p className="text-[16.5px] leading-relaxed">Revisamos tu caso y te proponemos los despachos que mejor encajan, con reunión confirmada. <span className="muted">Desde 39 €.</span></p>
-        </div>
+    <div className="p-6 md:p-7 flex flex-col min-w-0" style={dark ? { background: "#182544", color: "#EEE8DE" } : { background: "var(--surface)", border: "1px solid var(--line)" }}>
+      <div className="flex items-center justify-between gap-2">
+        <span className="f-display text-[1.6rem] leading-none">{a.name}</span>
+        {isCurrent ? <span className="pill-lacre" style={{ background: dark ? "#EEE8DE" : "var(--ink)", color: dark ? "#182544" : "var(--on-ink)" }}>Tu cuenta</span>
+          : a.tag ? <span className="pill-lacre" style={{ background: "var(--ink)", color: "var(--on-ink)" }}>{a.tag}</span> : null}
       </div>
-      <button onClick={() => openPlans(null)} className="btn btn-primary shrink-0">Ver opciones</button>
+      <div className="f-display text-[2.3rem] leading-none mt-3">{a.price ? `${a.price} €` : "0 €"}<span className="text-[14.5px]" style={{ opacity: .7 }}>{a.price ? " / mes" : " · para siempre"}</span></div>
+      <ul className="mt-5 space-y-2.5 text-[15.5px] leading-snug flex-1">
+        {a.lines.map(l => <li key={l} className="flex gap-2.5"><span className="shrink-0 mt-0.5" style={{ color: dark ? "#D1A54A" : "var(--accent)" }}><Icon name="check" size={15} /></span>{l}</li>)}
+      </ul>
+      <button onClick={() => onChoose(id)} disabled={isCurrent} className="btn mt-7 disabled:opacity-50 disabled:cursor-default"
+        style={dark ? { background: "#EEE8DE", color: "#182544" } : a.price ? { background: "var(--ink)", color: "var(--on-ink)" } : { border: "1px solid var(--ink)", color: "var(--ink)" }}>
+        {isCurrent ? "Cuenta actual" : a.price ? `Elegir ${a.name}` : "Usar cuenta gratis"}
+      </button>
     </div>
   );
 }
 
-function PlanPicker({ firm, onClose, onChoose }) {
-  const [plan, setPlan] = useState("prio");
-  const [extras, setExtras] = useState([]);
-  const p = planById(plan);
-  const total = p.price + (p.price ? extras.reduce((s, id) => s + CLIENT_EXTRAS.find(e => e.id === id).price, 0) : 0);
-  const toggle = (id) => setExtras(x => x.includes(id) ? x.filter(i => i !== id) : [...x, id]);
-  const freeDisabled = !firm;
+function PlanTabs({ tab, setTab }) {
+  return (
+    <div className="flex justify-center mb-8" role="tablist">
+      {[["personal", "Particulares"], ["biz", "Empresas"]].map(([k, l]) => (
+        <button key={k} role="tab" aria-selected={tab === k} onClick={() => setTab(k)} className="px-6 py-3 text-[14px] uppercase tracking-[0.08em]"
+          style={{ fontWeight: 700, borderBottom: tab === k ? "2px solid var(--ink)" : "1px solid var(--line)", color: tab === k ? "var(--ink)" : "var(--ink-2)" }}>{l}</button>
+      ))}
+    </div>
+  );
+}
+
+function PlanGrid({ tab, current, onChoose }) {
+  const ids = tab === "biz" ? BUSINESS_IDS : PERSONAL_IDS;
+  return (
+    <>
+      <div className={`grid gap-3 ${tab === "biz" ? "md:grid-cols-2 max-w-4xl mx-auto" : "md:grid-cols-3"}`}>
+        {ids.map(id => <PlanCard key={id} id={id} current={current} onChoose={onChoose} />)}
+      </div>
+      {tab === "biz" && <p className="text-[14.5px] muted text-center mt-5">Para pymes, family offices y gestorías con asuntos legales cada mes.</p>}
+      <p className="text-[14px] muted text-center mt-4 max-w-2xl mx-auto">{ACCOUNT_NOTE}</p>
+    </>
+  );
+}
+
+function AccountsSection({ current, onChoose }) {
+  const [tab, setTab] = useState("personal");
+  return (
+    <section id="cuentas" className="gutter py-20 md:py-28" style={{ borderTop: "1px solid var(--line)" }}>
+      <div className="max-w-6xl mx-auto">
+        <SectionHead eyebrow="Cuentas" title="Empieza gratis. Mejora tu búsqueda cuando lo necesites" />
+        <PlanTabs tab={tab} setTab={setTab} />
+        <PlanGrid tab={tab} current={current} onChoose={onChoose} />
+      </div>
+    </section>
+  );
+}
+
+function PlansModal({ initialTab, current, onChoose, onClose }) {
+  const [tab, setTab] = useState(initialTab || "personal");
   return (
     <div className="modal-wrap">
-      <div className="modal max-w-2xl scrollbar-none" style={{ padding: "32px 20px" }}>
+      <div className="modal max-w-5xl scrollbar-none" style={{ padding: "32px 16px" }}>
         <button type="button" onClick={onClose} className="absolute top-5 right-5 muted hover:opacity-70" aria-label="Cerrar"><Icon name="x" size={18} /></button>
-        <ModalHead eyebrow={firm ? firm.name : "Tu caso"} title="¿Cómo quieres seguir?" sub="Ves el precio antes de darnos ningún dato." />
-
-        <div className="grid md:grid-cols-3 gap-3" role="radiogroup" aria-label="Nivel de servicio">
-          {CLIENT_PLANS.map(pl => {
-            const on = plan === pl.id;
-            const disabled = pl.id === "free" && freeDisabled;
-            return (
-              <button key={pl.id} type="button" role="radio" aria-checked={on} disabled={disabled} onClick={() => setPlan(pl.id)}
-                className="text-left p-5 flex flex-col gap-3 transition-colors disabled:opacity-45 disabled:cursor-not-allowed"
-                style={{ border: on ? "2px solid var(--ink)" : "1px solid var(--line)", margin: on ? 0 : 1, background: on ? "var(--surface)" : "transparent" }}>
-                <div className="flex items-center justify-between gap-2">
-                  <span className="f-display text-[1.45rem] leading-none">{pl.name}</span>
-                  {pl.tag && <span className="pill-lacre" style={{ background: "var(--ink)", color: "var(--on-ink)" }}>{pl.tag}</span>}
-                </div>
-                <div className="text-[1.6rem] f-display leading-none">{pl.price ? `${pl.price} €` : "0 €"}<span className="text-[14px] muted"> {pl.price ? "por caso" : ""}</span></div>
-                <ul className="space-y-1.5 text-[14.5px] leading-snug">
-                  {pl.lines.map(l => <li key={l} className="flex gap-2"><span className="shrink-0 mt-0.5" style={{ color: "var(--accent)" }}><Icon name="check" size={15} /></span>{l}</li>)}
-                </ul>
-                {disabled && <span className="text-[13.5px] muted">Elige un despacho de la lista para escribirle gratis.</span>}
-              </button>
-            );
-          })}
-        </div>
-
-        {p.price > 0 && (
-          <div className="mt-7">
-            <div className="eyebrow mb-3">Extras</div>
-            {CLIENT_EXTRAS.map(e => (
-              <label key={e.id} htmlFor={`extra-${e.id}`} className="flex items-center gap-3 py-3 cursor-pointer" style={{ borderTop: "1px solid var(--line)" }}>
-                <input id={`extra-${e.id}`} type="checkbox" checked={extras.includes(e.id)} onChange={() => toggle(e.id)} className="w-4 h-4 shrink-0" style={{ accentColor: "var(--ink)" }} />
-                <span className="flex-1 text-[15.5px]">{e.name}</span>
-                <span className="f-mono text-[15.5px]">+{e.price} €</span>
-              </label>
-            ))}
-          </div>
-        )}
-
-        <p className="text-[14px] muted mt-6 text-center">La reunión con el despacho siempre es gratuita. Lo que pagas es el servicio de Lexa LG, nunca los honorarios del abogado.<br />{HOURS_NOTE}</p>
-
-        <button onClick={() => onChoose({ plan, extras: p.price ? extras : [], total })} className="btn btn-primary w-full mt-6">
-          {p.price ? `Continuar · ${total} €` : "Continuar gratis"}
-        </button>
+        <ModalHead eyebrow="Cuentas" title="Elige tu cuenta" sub="Lo que pagas es el servicio de Lexa LG: ver más opciones, ir más rápido e ir mejor preparado." />
+        <PlanTabs tab={tab} setTab={setTab} />
+        <PlanGrid tab={tab} current={current} onChoose={onChoose} />
       </div>
     </div>
+  );
+}
+
+function CheckoutModal({ id, onConfirm, onClose }) {
+  const a = ACCOUNTS[id];
+  const [company, setCompany] = useState("");
+  const [done, setDone] = useState(false);
+  const ok = !a.biz || company.trim();
+  return (
+    <div className="modal-wrap">
+      <div className="modal max-w-md scrollbar-none">
+        <button type="button" onClick={onClose} className="absolute top-5 right-5 muted hover:opacity-70" aria-label="Cerrar"><Icon name="x" size={18} /></button>
+        {done ? (
+          <SentState title={`Ya tienes cuenta ${a.name}`} onClose={onClose}>
+            {a.rank >= 2 ? "Verás todos los despachos y, en cada búsqueda, el despacho a medida para tu caso." : "Ya ves todos los despachos que encajan con tu caso y tus contactos van por la vía prioritaria."}
+            <span className="block mt-3 text-[13px]">Prototipo: no se ha realizado ningún cargo.</span>
+          </SentState>
+        ) : (
+          <>
+            <ModalHead eyebrow="Suscripción" title={`Cuenta ${a.name}`} />
+            {a.biz && (
+              <div className="mb-6">
+                <label htmlFor="checkout-company" className="field-label">Empresa</label>
+                <input id="checkout-company" value={company} onChange={e => setCompany(e.target.value)} className="field" />
+              </div>
+            )}
+            <ul className="space-y-2 text-[15.5px] mb-6">
+              {a.lines.map(l => <li key={l} className="flex gap-2.5"><span className="shrink-0 mt-0.5" style={{ color: "var(--accent)" }}><Icon name="check" size={15} /></span>{l}</li>)}
+            </ul>
+            <div className="flex justify-between gap-4 py-4 text-[17px]" style={{ borderTop: "1px solid var(--ink)", fontWeight: 700 }}>
+              <span>Total al mes (IVA incl.)</span><span className="f-mono">{a.price} €</span>
+            </div>
+            <p className="text-[14px] muted">{ACCOUNT_NOTE}</p>
+            <div className="mt-5 p-4 text-[14px] flex gap-3" style={{ background: "var(--surface-2)" }}>
+              <Icon name="lock" size={16} className="shrink-0 mt-0.5" />
+              <span>Aquí irá el pago seguro con tarjeta (Stripe). En este prototipo no se pide ningún dato de pago.</span>
+            </div>
+            <button onClick={() => { onConfirm(id); setDone(true); }} disabled={!ok} className="btn btn-primary w-full mt-6">Activar cuenta (demo) · {a.price} €/mes</button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* Listado de despachos según la cuenta: la gratuita ve los 3 de mejor encaje; Premium recibe además su despacho a medida */
+function GatedResults({ list, ctx, favorites, toggleFav, onContact, topPickFirst }) {
+  const { account, openPlans } = React.useContext(AccountContext);
+  const openFirm = React.useContext(FirmSheetContext);
+  const rank = ACCOUNTS[account].rank;
+  const visible = rank >= 1 ? list : list.slice(0, FREE_VISIBLE);
+  const hidden = list.slice(visible.length);
+  const pick = list[0];
+  const card = (firm, i) => (
+    <FirmCard key={firm.name} firm={firm} isFav={favorites.includes(firm.name)} onToggleFav={toggleFav} onContact={() => onContact(firm)} topPick={topPickFirst && i === 0} ctx={ctx} />
+  );
+  return (
+    <>
+      {pick && (rank >= 2 ? (
+        <div className="mb-12 grid md:grid-cols-[200px_1fr] gap-6 p-6 md:p-8" style={{ background: "#182544", color: "#EEE8DE" }}>
+          <div className="w-[120px] md:w-full"><FirmCrest name={pick.name} size={120} /></div>
+          <div className="min-w-0">
+            <div className="label mb-2" style={{ color: "#D1A54A", fontSize: 12 }}>Tu despacho a medida</div>
+            <h3 className="f-display text-[2rem] leading-tight">{pick.name}</h3>
+            <ul className="mt-4 space-y-2 text-[15.5px]">
+              {(fitReasons(pick, ctx).length ? fitReasons(pick, ctx) : [pick.desc]).map(r => <li key={r} className="flex gap-2.5"><span className="shrink-0 mt-0.5" style={{ color: "#D1A54A" }}><Icon name="check" size={15} /></span>{r}</li>)}
+            </ul>
+            <div className="flex flex-wrap gap-3 mt-6">
+              <button onClick={() => onContact(pick)} className="btn" style={{ background: "#EEE8DE", color: "#182544" }}>Contactar</button>
+              <button onClick={() => openFirm(pick, ctx)} className="btn btn-light">Ver ficha</button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <button onClick={() => openPlans("personal")} className="w-full mb-12 p-5 md:p-6 flex items-center gap-4 text-left" style={{ border: "1px solid var(--ink)" }}>
+          <span className="shrink-0"><AurkiAvatar size={44} /></span>
+          <span className="min-w-0 flex-1">
+            <span className="eyebrow block mb-1">Despacho a medida · cuenta Premium</span>
+            <span className="text-[16px] leading-snug block">Te decimos cuál de estos despachos es el ideal para tu caso y por qué, con reunión al siguiente día laborable.</span>
+          </span>
+          <Icon name="chevronR" size={18} className="shrink-0" />
+        </button>
+      ))}
+
+      <div className="eyebrow justify-center mb-8">{rank >= 1 ? `${list.length} despachos encajan` : `Los ${visible.length} que mejor encajan · de ${list.length}`}</div>
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-3 md:gap-x-6 gap-y-12">
+        {visible.map(card)}
+      </div>
+
+      {hidden.length > 0 && (
+        <div className="mt-12 p-6 md:p-8 flex flex-col md:flex-row md:items-center gap-6" style={{ background: "var(--surface-2)" }}>
+          <div className="flex -space-x-3 shrink-0" aria-hidden="true">
+            {hidden.slice(0, 4).map(f => <span key={f.name} style={{ filter: "blur(3px)", opacity: .8 }}><FirmCrest name={f.name} size={52} /></span>)}
+          </div>
+          <div className="min-w-0 flex-1">
+            <h3 className="f-display text-[1.5rem] leading-snug">Hay {hidden.length} {hidden.length === 1 ? "despacho más" : "despachos más"} que {hidden.length === 1 ? "encaja" : "encajan"} con tu caso</h3>
+            <p className="text-[15.5px] muted mt-1">Con la cuenta Plus los ves todos y tu contacto va por la vía prioritaria: reunión en 2 días laborables.</p>
+          </div>
+          <button onClick={() => openPlans("personal")} className="btn btn-primary shrink-0">Ver todos · 19 €/mes</button>
+        </div>
+      )}
+    </>
   );
 }
 
 /* ---------------------------------- FORMULARIO DE CONTACTO ---------------------------------- */
-function ContactFormModal({ firm, choice, onClose, onSubmit }) {
+const RESPONSE_BY_RANK = [
+  (f) => `${f} recibirá tu consulta. La respuesta habitual llega en 3–7 días.`,
+  (f) => `Revisaremos tu caso en 24 h laborables y te propondremos fecha con ${f} en un hueco de los 2 días laborables siguientes.`,
+  (f) => `Revisaremos tu caso en 4 h laborables y tendrás reunión con ${f} el siguiente día laborable. Te enviaremos la lista de documentos que debes llevar.`,
+];
+function ContactFormModal({ firm, account, onClose }) {
+  const { openPlans } = React.useContext(AccountContext);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [country, setCountry] = useState("");
   const [caseText, setCaseText] = useState("");
   const [sent, setSent] = useState(false);
-  const p = planById(choice.plan);
+  const a = ACCOUNTS[account];
   const canSend = name.trim() && email.trim();
-
-  const submit = (e) => {
-    e.preventDefault();
-    if (!canSend) return;
-    if (p.price) { onSubmit({ name, email }); return; }
-    setSent(true);
-    setTimeout(onClose, 1800);
-  };
+  const submit = (e) => { e.preventDefault(); if (canSend) setSent(true); };
 
   return (
     <div className="modal-wrap">
       <div className="modal max-w-md scrollbar-none">
-        {!sent && <button type="button" onClick={onClose} className="absolute top-5 right-5 muted hover:opacity-70" aria-label="Cerrar"><Icon name="x" size={18} /></button>}
+        <button type="button" onClick={onClose} className="absolute top-5 right-5 muted hover:opacity-70" aria-label="Cerrar"><Icon name="x" size={18} /></button>
         {sent ? (
-          <SentState title="Solicitud enviada">{firm.name} recibirá tu consulta. La respuesta habitual llega en 3–7 días.</SentState>
+          <SentState title="Solicitud enviada" onClose={onClose}>{RESPONSE_BY_RANK[a.rank](firm.name)}</SentState>
         ) : (
           <form onSubmit={submit}>
             <div className="flex flex-col items-center text-center mb-7">
-              {firm ? <FirmCrest name={firm.name} size={64} /> : <Logo size={64} />}
-              <div className="eyebrow mt-5">{p.name}{p.price ? ` · ${choice.total} €` : ""}</div>
-              <h3 className="f-display text-[1.8rem] leading-tight mt-1">{firm ? firm.name : "Cuéntanos tu caso"}</h3>
-              <p className="text-[14px] muted mt-3 flex items-center gap-2"><Icon name="lock" size={13} /> {p.price ? "Solo lo ve el equipo de Lexa LG y los despachos que te propongamos." : "Estos datos se comparten únicamente con este despacho."}</p>
+              <FirmCrest name={firm.name} size={64} />
+              <div className="eyebrow mt-5">Cuenta {a.name}</div>
+              <h3 className="f-display text-[1.8rem] leading-tight mt-1">{firm.name}</h3>
+              <p className="text-[14px] muted mt-3 flex items-center gap-2"><Icon name="lock" size={13} /> Estos datos se comparten únicamente con este despacho.</p>
+            </div>
+
+            <div className="p-4 mb-7 text-[14.5px] leading-snug" style={{ background: "var(--surface-2)" }}>
+              {RESPONSE_BY_RANK[a.rank](firm.name)}
+              {a.rank === 0 && <button type="button" onClick={() => { onClose(); openPlans("personal"); }} className="link-u mt-2.5 flex">¿Lo necesitas antes? Cuenta Plus</button>}
             </div>
 
             <div className="space-y-6">
@@ -1180,114 +1272,6 @@ function ContactFormModal({ firm, choice, onClose, onSubmit }) {
               </div>
             </div>
 
-            <button type="submit" disabled={!canSend} className="btn btn-primary w-full mt-9">{p.price ? `Ir al pago · ${choice.total} €` : "Enviar solicitud"}</button>
-          </form>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function PayModal({ firm, choice, who, onClose }) {
-  const [paid, setPaid] = useState(false);
-  const p = planById(choice.plan);
-  const rows = [[`Servicio ${p.name}`, p.price], ...choice.extras.map(id => { const e = CLIENT_EXTRAS.find(x => x.id === id); return [e.name, e.price]; })];
-  return (
-    <div className="modal-wrap">
-      <div className="modal max-w-md scrollbar-none">
-        <button type="button" onClick={onClose} className="absolute top-5 right-5 muted hover:opacity-70" aria-label="Cerrar"><Icon name="x" size={18} /></button>
-        {paid ? (
-          <SentState title="Reserva confirmada" onClose={onClose}>
-            Revisaremos tu caso en {choice.plan === "prem" ? "4" : "24"} h laborables{firm ? `, teniendo en cuenta ${firm.name},` : ""} y te propondremos despacho por correo, a {who.email}. <span className="block mt-3 text-[13px]">Prototipo: no se ha realizado ningún cargo.</span>
-          </SentState>
-        ) : (
-          <>
-            <ModalHead eyebrow="Pago" title="Resumen" />
-            <dl>
-              {rows.map(([k, v]) => (
-                <div key={k} className="flex justify-between gap-4 py-3 text-[15.5px]" style={{ borderTop: "1px solid var(--line)" }}>
-                  <dt>{k}</dt><dd className="f-mono">{v} €</dd>
-                </div>
-              ))}
-              <div className="flex justify-between gap-4 py-4 text-[17px]" style={{ borderTop: "1px solid var(--ink)", fontWeight: 700 }}>
-                <dt>Total (IVA incl.)</dt><dd className="f-mono">{choice.total} €</dd>
-              </div>
-            </dl>
-            <p className="text-[14px] muted mt-2">Si no cumplimos el plazo o el despacho propuesto no encaja con tu caso, te devolvemos el importe automáticamente. La reunión con el abogado es gratuita. {HOURS_NOTE}</p>
-            <div className="mt-6 p-4 text-[14px] flex gap-3" style={{ background: "var(--surface-2)" }}>
-              <Icon name="lock" size={16} className="shrink-0 mt-0.5" />
-              <span>Aquí irá el pago seguro con tarjeta (Stripe). En este prototipo no se pide ningún dato de pago.</span>
-            </div>
-            <button onClick={() => setPaid(true)} className="btn btn-primary w-full mt-6">Confirmar reserva (demo) · {choice.total} €</button>
-          </>
-        )}
-      </div>
-    </div>
-  );
-}
-
-/* ---------------------------------- PLANES PARA EMPRESAS ---------------------------------- */
-const BUSINESS_PLANS = [
-  { id: "emp", name: "Empresas", price: 99, lines: ["Hasta 3 casos al mes en nivel Prioritario", "Panel con todos tus casos", "Una sola factura mensual"] },
-  { id: "plus", name: "Empresas Plus", price: 249, lines: ["Casos ilimitados en nivel Premium", "Gestor de cuenta fijo", "Panel y factura mensual"] },
-];
-
-function EmpresasSection({ onRequest }) {
-  return (
-    <section id="empresas" className="gutter py-20 md:py-28" style={{ borderTop: "1px solid var(--line)" }}>
-      <div className="max-w-5xl mx-auto">
-        <SectionHead eyebrow="Para empresas" title="Tus asuntos legales, cubiertos cada mes">
-          <p className="text-[16.5px] muted max-w-xl">Para pymes, family offices y gestorías con casos cada mes. Una cuota fija en lugar de pagar caso a caso.</p>
-        </SectionHead>
-        <div className="grid md:grid-cols-2 gap-4">
-          {BUSINESS_PLANS.map((b, i) => (
-            <div key={b.id} className="p-7 md:p-9 flex flex-col" style={{ background: i ? "#182544" : "var(--surface)", color: i ? "#EEE8DE" : "var(--ink)", border: i ? "0" : "1px solid var(--line)" }}>
-              <div className="f-display text-[1.8rem]">{b.name}</div>
-              <div className="mt-2 f-display text-[2.6rem] leading-none">{b.price} €<span className="text-[15px]" style={{ opacity: .7 }}> / mes</span></div>
-              <ul className="mt-6 space-y-2.5 text-[16px] flex-1">
-                {b.lines.map(l => <li key={l} className="flex gap-2.5"><span className="shrink-0 mt-0.5" style={{ color: i ? "#D1A54A" : "var(--accent)" }}><Icon name="check" size={16} /></span>{l}</li>)}
-              </ul>
-              <button onClick={() => onRequest(b.id)} className="btn mt-8" style={i ? { background: "#EEE8DE", color: "#182544" } : { background: "var(--ink)", color: "var(--on-ink)" }}>Solicitar {b.name}</button>
-            </div>
-          ))}
-        </div>
-        <p className="text-[14.5px] muted text-center mt-6">Con 3 casos al mes, el plan Empresas ya sale más barato que pagar caso a caso (3 × 39 € = 117 €).</p>
-      </div>
-    </section>
-  );
-}
-
-function BusinessModal({ initialPlan, onClose }) {
-  const [company, setCompany] = useState("");
-  const [email, setEmail] = useState("");
-  const [plan, setPlan] = useState(initialPlan || "emp");
-  const [sent, setSent] = useState(false);
-  const canSend = company.trim() && email.trim();
-  return (
-    <div className="modal-wrap">
-      <div className="modal max-w-md scrollbar-none">
-        <button type="button" onClick={onClose} className="absolute top-5 right-5 muted hover:opacity-70" aria-label="Cerrar"><Icon name="x" size={18} /></button>
-        {sent ? (
-          <SentState title="Solicitud recibida" onClose={onClose}>Te contactaremos para activar tu plan y preparar tu panel de casos.</SentState>
-        ) : (
-          <form onSubmit={(e) => { e.preventDefault(); if (canSend) setSent(true); }}>
-            <ModalHead eyebrow="Para empresas" title="Solicitar plan" />
-            <div className="space-y-6">
-              <div>
-                <label htmlFor="biz-company" className="field-label">Empresa</label>
-                <input id="biz-company" value={company} onChange={e => setCompany(e.target.value)} className="field" />
-              </div>
-              <div>
-                <label htmlFor="biz-email" className="field-label">Correo electrónico</label>
-                <input id="biz-email" type="email" value={email} onChange={e => setEmail(e.target.value)} className="field" />
-              </div>
-              <div>
-                <label htmlFor="biz-plan" className="field-label">Plan</label>
-                <select id="biz-plan" value={plan} onChange={e => setPlan(e.target.value)} className="field">
-                  {BUSINESS_PLANS.map(b => <option key={b.id} value={b.id}>{b.name} · {b.price} €/mes</option>)}
-                </select>
-              </div>
-            </div>
             <button type="submit" disabled={!canSend} className="btn btn-primary w-full mt-9">Enviar solicitud</button>
           </form>
         )}
@@ -1356,6 +1340,7 @@ function fitReasons(firm, ctx = {}) {
 }
 
 function FirmSheet({ firm, ctx, onClose, onContact, onSwitch, isFav, onToggleFav }) {
+  const { account, openPlans } = React.useContext(AccountContext);
   const ref = useRef(null);
   const [tone, fg] = toneFor(firm.name);
   const reasons = fitReasons(firm, ctx);
@@ -1422,7 +1407,13 @@ function FirmSheet({ firm, ctx, onClose, onContact, onSwitch, isFav, onToggleFav
               <p className="text-[13.5px] muted mt-7 flex gap-2"><Icon name="sparkle" size={15} className="shrink-0 mt-0.5" /> Firma recomendada: este despacho patrocina su posición en Lexa LG. Los motivos de encaje de arriba no tienen en cuenta el patrocinio.</p>
             )}
 
-            {similar.length > 0 && (
+            {similar.length > 0 && account === "free" && (
+              <button onClick={() => { onClose(); openPlans("personal"); }} className="mt-10 w-full text-left p-5 flex items-center gap-3" style={{ border: "1px solid var(--line)" }}>
+                <span className="flex-1 text-[15.5px]">Compara con {similar.length} despachos parecidos con la cuenta Plus</span>
+                <Icon name="chevronR" size={16} />
+              </button>
+            )}
+            {similar.length > 0 && account !== "free" && (
               <div className="mt-10">
                 <div className="eyebrow mb-1">Compara con</div>
                 {similar.map(f => (
@@ -1522,6 +1513,7 @@ function NewsFeed() {
 
 /* ---------------------------------- FAVORITES PANEL ---------------------------------- */
 function FavoritesPanel({ favorites, toggleFav, onClose, user, onLogout }) {
+  const { account, openPlans } = React.useContext(AccountContext);
   const openFirm = React.useContext(FirmSheetContext);
   const favFirms = FIRMS.filter(f => favorites.includes(f.name));
   return (
@@ -1531,6 +1523,7 @@ function FavoritesPanel({ favorites, toggleFav, onClose, user, onLogout }) {
         <div className="flex items-start justify-between mb-10">
           <div>
             <div className="eyebrow">{user ? `Hola, ${user.name}` : "Mi selección"}</div>
+            <button onClick={() => { onClose(); openPlans(ACCOUNTS[account].biz ? "biz" : "personal"); }} className="text-[14px] muted mt-1 underline underline-offset-4">Cuenta {ACCOUNTS[account].name} · cambiar</button>
             <h3 className="f-display text-[2.2rem] mt-2">Favoritos</h3>
           </div>
           <button onClick={onClose} className="muted hover:opacity-70" aria-label="Cerrar"><Icon name="x" /></button>
@@ -1749,7 +1742,7 @@ function Concierge({ onOpenWizard }) {
 }
 
 /* ---------------------------------- MENÚ LATERAL ---------------------------------- */
-function MenuDrawer({ onClose, onPick, onExplore, onNews, onOfertas, onJoin }) {
+function MenuDrawer({ onClose, onPick, onExplore, onNews, onOfertas, onJoin, onAccounts }) {
   const go = (fn) => () => { onClose(); fn(); };
   return (
     <div className="fixed inset-0 z-50 flex" style={{ background: "var(--overlay)" }} onClick={onClose}>
@@ -1760,7 +1753,7 @@ function MenuDrawer({ onClose, onPick, onExplore, onNews, onOfertas, onJoin }) {
           <button onClick={onClose} aria-label="Cerrar menú"><Icon name="x" size={20} /></button>
         </div>
         <nav className="flex flex-col">
-          {[["Especialidades", onExplore], ["Despachos recomendados", onOfertas], ["Actualidad legal", onNews], ["Únete como despacho", onJoin]].map(([l, fn]) => (
+          {[["Especialidades", onExplore], ["Despachos recomendados", onOfertas], ["Actualidad legal", onNews], ["Cuentas y precios", onAccounts], ["Únete como despacho", onJoin]].map(([l, fn]) => (
             <button key={l} onClick={go(fn)} className="f-display text-[1.7rem] text-left py-2.5 hover:opacity-60 transition-opacity">{l}</button>
           ))}
         </nav>
@@ -1889,7 +1882,11 @@ function App() {
   const [searchQuery, setSearchQuery] = useState("");
   // Flujo de contacto: plan (precio visible) → consentimiento → datos → pago (si es de pago)
   const [contact, setContact] = useState(null); // { firm, stage: plan|policy|form|pay, choice, who }
-  const [bizPlan, setBizPlan] = useState(null);
+  const [account, setAccount] = useLocalState("lexa_account", "free");
+  const [plansTab, setPlansTab] = useState(null); // abre el selector de cuentas
+  const [checkout, setCheckout] = useState(null); // id de la cuenta a contratar
+  const choosePlan = (id) => { setPlansTab(null); if (ACCOUNTS[id].price) setCheckout(id); else setAccount("free"); };
+  const accountCtx = useMemo(() => ({ account, openPlans: (tab) => setPlansTab(tab || "personal") }), [account]);
   const [showAuth, setShowAuth] = useState(false);
   const [showFav, setShowFav] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -1903,7 +1900,7 @@ function App() {
     setFavorites(prev => prev.includes(name) ? prev.filter(n => n !== name) : [...prev, name]);
   };
 
-  const openContact = (firm) => setContact({ firm, stage: "plan" });
+  const openContact = (firm) => setContact({ firm, stage: "policy" });
   const closeContact = () => setContact(null);
   const nextStage = (patch) => setContact(c => ({ ...c, ...patch }));
 
@@ -1959,7 +1956,7 @@ function App() {
 
   return (
     <FirmSheetContext.Provider value={openFirm}>
-    <PlansContext.Provider value={openContact}>
+    <AccountContext.Provider value={accountCtx}>
     <div className="min-h-screen flex flex-col">
       <div className="gutter py-2.5 text-center text-[12.5px] tracking-[0.12em] uppercase" style={{ background: "#182544", color: "#E9E3D8" }}>
         Primera consulta confidencial<span className="hidden sm:inline"> <span style={{ color: "#D1A54A" }}>·</span> Sede en Bilbao</span>
@@ -1974,7 +1971,7 @@ function App() {
             <HomeCategories onPick={pickCategory} onExplore={goEspecialidades} />
             <NewsFeed />
             <OfertasBufetes favorites={favorites} toggleFav={toggleFav} onContact={openContact} />
-            <EmpresasSection onRequest={setBizPlan} />
+            <AccountsSection current={account} onChoose={choosePlan} />
             <GuaranteesSection />
             <JoinFirmsSection onOpen={() => setShowJoinFirm("pro")} />
             <FirmPlansSection onJoin={setShowJoinFirm} />
@@ -2027,7 +2024,7 @@ function App() {
               <p className="muted leading-relaxed">Bilbao, Bizkaia</p>
               <div className="flex flex-col items-start gap-3 mt-6">
                 <button onClick={() => goSection("garantias")} className="link-u">Plazos y garantías</button>
-                <button onClick={() => goSection("empresas")} className="link-u">Planes para empresas</button>
+                <button onClick={() => goSection("cuentas")} className="link-u">Cuentas y precios</button>
                 <button onClick={() => goSection("planes-despachos")} className="link-u">Planes para despachos</button>
               </div>
             </div>
@@ -2039,12 +2036,11 @@ function App() {
         </div>
       </footer>
 
-      {contact?.stage === "plan" && <PlanPicker firm={contact.firm} onClose={closeContact} onChoose={(choice) => nextStage({ choice, stage: "policy" })} />}
       {contact?.stage === "policy" && <ConsentModal onClose={closeContact} onAccept={() => nextStage({ stage: "form" })} />}
-      {contact?.stage === "form" && <ContactFormModal firm={contact.firm} choice={contact.choice} onClose={closeContact} onSubmit={(who) => nextStage({ who, stage: "pay" })} />}
-      {contact?.stage === "pay" && <PayModal firm={contact.firm} choice={contact.choice} who={contact.who} onClose={closeContact} />}
-      {bizPlan && <BusinessModal initialPlan={bizPlan} onClose={() => setBizPlan(null)} />}
-      {showMenu && <MenuDrawer onClose={() => setShowMenu(false)} onPick={pickCategory} onExplore={goEspecialidades} onNews={goNews} onOfertas={() => goSection("ofertas")} onJoin={() => setShowJoinFirm(true)} />}
+      {contact?.stage === "form" && <ContactFormModal firm={contact.firm} account={account} onClose={closeContact} />}
+      {plansTab && <PlansModal initialTab={plansTab} current={account} onChoose={choosePlan} onClose={() => setPlansTab(null)} />}
+      {checkout && <CheckoutModal id={checkout} onConfirm={setAccount} onClose={() => setCheckout(null)} />}
+      {showMenu && <MenuDrawer onClose={() => setShowMenu(false)} onPick={pickCategory} onExplore={goEspecialidades} onNews={goNews} onOfertas={() => goSection("ofertas")} onAccounts={() => goSection("cuentas")} onJoin={() => setShowJoinFirm(true)} />}
       {showAuth && <AuthModal onClose={() => setShowAuth(false)} onLogin={(u) => { setUser(u); setShowAuth(false); }} />}
       {showFav && <FavoritesPanel favorites={favorites} toggleFav={toggleFav} onClose={() => setShowFav(false)} user={user} onLogout={logout} />}
       {showJoinFirm && <JoinFirmModal initialPlan={typeof showJoinFirm === "string" ? showJoinFirm : "pro"} onClose={() => setShowJoinFirm(false)} />}
@@ -2058,7 +2054,7 @@ function App() {
 
       <Concierge onOpenWizard={goEspecialidades} />
     </div>
-    </PlansContext.Provider>
+    </AccountContext.Provider>
     </FirmSheetContext.Provider>
   );
 }
