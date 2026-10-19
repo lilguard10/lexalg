@@ -779,7 +779,7 @@ function GuaranteesSection() {
     ["clock", "Contamos en horas laborables", "De lunes a viernes, de 9:00 a 19:00, sin festivos. Un caso que llega el viernes por la tarde se revisa el lunes por la mañana."],
     ["user", "Revisamos tu caso nosotros", "El plazo de revisión depende solo de Lexa LG: 24 h laborables con cuenta Plus y 4 h con Premium."],
     ["search", "Solo despachos con agenda abierta", "Con cuenta Plus o Premium solo te proponemos despachos que ya tienen huecos libres dentro del plazo. La reunión sale de su agenda real."],
-    ["check", "Devolución automática", "Si no cumplimos el plazo, te devolvemos la cuota de ese mes sin que tengas que reclamarlo."],
+    ["check", "Sin permanencia", "Las cuentas de pago se cancelan cuando quieras, desde tu panel y sin llamadas."],
     ["gem", "Premium con plazas limitadas", "Limitamos el número de cuentas Premium para poder cumplir los plazos que prometemos."],
     ["lock", "La reunión es gratuita", "Pagas el servicio de Lexa LG, nunca los honorarios del abogado ni un trato preferente: esos los pactas solo con el despacho."],
   ];
@@ -1013,7 +1013,7 @@ function ConsentModal({ onAccept, onClose }) {
 // El cliente paga por el servicio de Lexa LG (ver más, ir más rápido, ir mejor preparado), nunca por el despacho ni por sus honorarios.
 const ACCOUNTS = {
   free: { name: "Gratis", price: 0, rank: 0, lines: ["Ves los 3 despachos que mejor encajan con tu caso", "Contactas gratis con ellos", "Análisis de tu caso con Aurki", "Respuesta habitual del despacho: 3–7 días"] },
-  plus: { name: "Plus", price: 19, rank: 1, tag: "Recomendado", lines: ["Ves todos los despachos que encajan, no solo 3", "Revisamos tu caso en 24 h laborables", "Reunión en un hueco libre de su agenda en 2 días laborables", "Si no cumplimos el plazo, te devolvemos la cuota del mes"] },
+  plus: { name: "Plus", price: 19, rank: 1, tag: "Recomendado", lines: ["Ves todos los despachos que encajan, no solo 3", "Revisamos tu caso en 24 h laborables", "Reunión en un hueco libre de su agenda en 2 días laborables", "Comparas honorarios, tamaño y trayectoria"] },
   premium: { name: "Premium", price: 49, rank: 2, lines: ["Todo lo de Plus", "Despacho a medida: te decimos cuál es el ideal para ti y por qué", "Revisión en 4 h laborables y reunión al siguiente día laborable", "Tu caso resumido y la lista de documentos para la reunión", "Intérprete en la reunión incluido", "Un gestor de Lexa LG te acompaña"] },
   emp: { name: "Empresas", price: 99, rank: 1, biz: true, lines: ["Todo lo de Plus para tu equipo (hasta 3 personas)", "Hasta 3 casos al mes con atención prioritaria", "Panel con todos los casos de la empresa", "Una sola factura mensual"] },
   empplus: { name: "Empresas Plus", price: 249, rank: 2, biz: true, lines: ["Todo lo de Premium, en casos ilimitados", "Despacho a medida en cada caso", "Gestor de cuenta fijo", "Usuarios ilimitados"] },
